@@ -2,6 +2,7 @@
 using Sample.Domain.Interfaces;
 using Sample.Domain.Models;
 using Sample.Infraestructure.Data.EFDbContext;
+using System.Linq.Expressions;
 
 namespace Sample.Infraestructure.Repository
 {
@@ -26,14 +27,28 @@ namespace Sample.Infraestructure.Repository
 
         public async Task DeleteAsync(T entity)
         {
-            var enity = await FindByIdAsync(entity.Id) ?? throw new Exception($"{nameof(T)} Not Found");
-            _dbSet.Remove(enity);
+            var result = await FindByIdAsync(entity.Id) ?? throw new Exception($"{nameof(T)} Not Found");
+            _dbSet.Remove(result);
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<T> FindByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id) ?? throw new Exception($"{nameof(T)} Not Found");
+        }
+
+        public async Task<T> GetByFilter(Expression<Func<T, bool>> filter)
+        {
+            var entity = await _dbSet.FindAsync(filter) ?? throw new Exception($"{nameof(T)} Not Found");
+            return entity;
+        }
+
+        public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy, bool? isDesc = true)
+        {
+            if (isDesc == false)
+                return _dbSet.Where(predicate).OrderBy(orderBy);
+            else
+                return _dbSet.Where(predicate).OrderByDescending(orderBy);
         }
 
         public async Task<List<T>> ReadAllAsync()
@@ -47,6 +62,11 @@ namespace Sample.Infraestructure.Repository
             _dbSet.Update(entity);
             await _appDbContext.SaveChangesAsync();
             return entity;
+        }
+
+        Task<IEnumerable<T>> IRepository<T>.GetByFilter(Expression<Func<T, bool>> filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

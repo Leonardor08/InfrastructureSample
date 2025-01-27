@@ -1,5 +1,5 @@
-using Sample.Infraestructure.Configuration.GenericInjections;
-using Sample.Infraestructure.Configuration.ORM;
+using Sample.Api.Configuration.GenericInjections;
+using Sample.Api.Configuration.ORM;
 
 var builder = WebApplication.CreateBuilder(args);
 

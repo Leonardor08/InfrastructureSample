@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Sample.Domain.Interfaces;
+﻿using Sample.Domain.Interfaces;
 using Sample.Infraestructure.Repository;
 
-namespace Sample.Infraestructure.Configuration.GenericInjections;
+namespace Sample.Api.Configuration.GenericInjections;
 
 public static class Repository
 {

@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Sample.Domain.Constants;
 using Sample.Infraestructure.Data.EFDbContext;
 
-namespace Sample.Infraestructure.Configuration.ORM;
+namespace Sample.Api.Configuration.ORM;
 
 public static class SqlConnection
 {

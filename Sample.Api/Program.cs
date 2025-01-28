@@ -1,5 +1,6 @@
 using Sample.Api.Configuration.GenericInjections;
 using Sample.Api.Configuration.ORM;
+using Sample.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,5 +25,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Add custom middleware
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();

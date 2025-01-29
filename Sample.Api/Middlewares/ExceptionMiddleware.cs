@@ -37,6 +37,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
             case ValidatorException validatorException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.VALIDATION_ERROR, Errors = validatorException.Errors });
 				context.Response.StatusCode = statusCode;
+                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
 			case InvalidOperationException invalidOperationException:
                 result = JsonSerializer.Serialize(new GenericException(invalidOperationException.Message, MiddlewareConstants.INVALID_CODE_ERROR));

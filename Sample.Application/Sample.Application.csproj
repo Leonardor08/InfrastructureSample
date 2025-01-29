@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Queries\Handlers\" />
-  </ItemGroup>
-
 </Project>

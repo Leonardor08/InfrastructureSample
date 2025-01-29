@@ -34,7 +34,11 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
 
         switch (ex)
         {
-            case InvalidOperationException invalidOperationException:
+            case ValidatorException validatorException:
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.VALIDATION_ERROR, Errors = validatorException.Errors });
+				context.Response.StatusCode = statusCode;
+                break;
+			case InvalidOperationException invalidOperationException:
                 result = JsonSerializer.Serialize(new GenericException(invalidOperationException.Message, MiddlewareConstants.INVALID_CODE_ERROR));
                 context.Response.StatusCode = statusCode;
                 await SavingExceptions(context, ex, serviceLogPersistance);
@@ -61,7 +65,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         }
         if (string.IsNullOrEmpty(result) &&  env.IsDevelopment())
         {
-            result = JsonSerializer.Serialize(new GenericException(ex.Message, ex.StackTrace ?? string.Empty));
+			result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.INTERNAL_ERROR, Errors = [new(){ Code = statusCode.ToString(), Message = MiddlewareConstants.INTERNAL_ERROR }] });
             context.Response.StatusCode = statusCode;
             await SavingExceptions(context, ex, serviceLogPersistance);
         }

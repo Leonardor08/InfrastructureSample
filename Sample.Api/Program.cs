@@ -30,5 +30,6 @@ app.MapControllers();
 
 // Add custom middleware
 app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<AuthenticatorMiddleware>();
 
 app.Run();

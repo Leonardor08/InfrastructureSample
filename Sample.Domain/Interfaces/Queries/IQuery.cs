@@ -2,4 +2,5 @@
 
 public interface IQuery<TReaponse>
 {
+	Guid Id { get; }
 }

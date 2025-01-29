@@ -20,7 +20,7 @@
 
 			var token = value.ToString();
 
-			if (string.IsNullOrWhiteSpace(token) || !token.StartsWith("Bearer "))
+			if (string.IsNullOrWhiteSpace(token) || !token.StartsWith("Bearer"))
 			{
 				context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 				await context.Response.WriteAsync("Invalid or missing Authorization token.");

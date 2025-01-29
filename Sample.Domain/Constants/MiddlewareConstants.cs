@@ -9,5 +9,6 @@
         public const string TIME_OUT_CODE_ERROR = "La operación genero un time out.";
         public const string IO_CODE_ERROR = "Fallo al leer el archivo.";
         public const string INTERNAL_ERROR = "Ocurrió un error inesperado";
+        public const string VALIDATION_ERROR = "Falló una o mas valicaiones";
     }
 }

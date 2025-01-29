@@ -12,5 +12,5 @@ namespace Sample.Application.Queries.Handlers
 			var users = await _repository.ReadAllAsync();
 			return new() { Data = users, Message = "Esto esta funcionando una belleza", Success = true };
 		}
-	}
+    }
 }

@@ -3,7 +3,8 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries
 {
-	public class GetUsersQuery: IQuery<List<User>>
-	{
-	}
+    public class GetUserByIdQuery : IQuery<User>
+    {
+        public Guid Id { get; set; }
+    }
 }

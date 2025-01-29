@@ -16,6 +16,7 @@ namespace Sample.Api.Configuration.CQRS.Commands
         {
             services.AddScoped(typeof(ICommandHandler<CreateUserCommand, Response>), typeof(CreateUserCommandHandler));
             services.AddScoped(typeof(IQueryHandler<GetUsersQuery, List<User>>), typeof(GetUsersQueryHandler));
+            services.AddScoped(typeof(IQueryHandler<GetUserByIdQuery, User>), typeof(GetUserByIdQueryHandler));
             services.AddTransient<ICreateUserValidations, CreateUserValidations>();
 			return services;
         }

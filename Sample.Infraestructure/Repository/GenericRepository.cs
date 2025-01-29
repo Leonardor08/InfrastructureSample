@@ -20,6 +20,7 @@ namespace Sample.Infraestructure.Repository
         public async Task<T> CreateAsync(T entity)
         {
             entity.CreatedDate = DateTime.Now;
+            entity.UpdateDate = null;
             await _dbSet.AddAsync(entity);
             await _appDbContext.SaveChangesAsync();
             return entity;
@@ -62,11 +63,6 @@ namespace Sample.Infraestructure.Repository
             _dbSet.Update(entity);
             await _appDbContext.SaveChangesAsync();
             return entity;
-        }
-
-        Task<IEnumerable<T>> IRepository<T>.GetByFilter(Expression<Func<T, bool>> filter)
-        {
-            throw new NotImplementedException();
         }
     }
 }

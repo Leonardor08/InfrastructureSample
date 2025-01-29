@@ -19,29 +19,8 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex, _env);
-            await HandleAuthorizationAsync(context);
         }
     }
-    private async Task HandleAuthorizationAsync(HttpContext context)
-    {
-		if (!context.Request.Headers.TryGetValue("Authorization", out Microsoft.Extensions.Primitives.StringValues value))
-		{
-			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-			await context.Response.WriteAsync("Authorization token is missing.");
-			return;
-		}
-
-		var token = value.ToString();
-
-		if (string.IsNullOrWhiteSpace(token) || !token.StartsWith("Bearer"))
-		{
-			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-			await context.Response.WriteAsync("Invalid or missing Authorization token.");
-			return;
-		}
-
-		await _next(context);
-	}
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env)
     {

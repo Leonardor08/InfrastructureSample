@@ -19,6 +19,7 @@ namespace Sample.Infraestructure.Repository
 
         public async Task<T> CreateAsync(T entity)
         {
+            entity.Id = Guid.NewGuid();
             entity.CreatedDate = DateTime.Now;
             entity.UpdateDate = null;
             await _dbSet.AddAsync(entity);

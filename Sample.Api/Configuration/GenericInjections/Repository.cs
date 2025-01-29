@@ -1,4 +1,5 @@
-﻿using Sample.Domain.Interfaces;
+﻿using Sample.Api.Middlewares;
+using Sample.Domain.Interfaces;
 using Sample.Infraestructure.Repository;
 
 namespace Sample.Api.Configuration.GenericInjections;

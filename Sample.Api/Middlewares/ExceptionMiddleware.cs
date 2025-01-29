@@ -15,13 +15,14 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
 
     public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog> repository)
     {
-        try
+		context.Request.EnableBuffering();
+		try
         {
             await _next(context);
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex, _env, repository);
+			await HandleExceptionAsync(context, ex, _env, repository);
         }
     }
 
@@ -82,7 +83,17 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
 
     private static async Task SavingExceptions(HttpContext context, Exception ex, ExceptionErrorPersistence serviceLogPersistance)
     {
-        ErrorLog log = new() { Request = $" {context.Request.Method}  {context.Request.Path} ", LogException = ex.Message, StackTrace = ex.StackTrace ?? string.Empty };
+		ErrorLog log = new() { Request = $" {context.Request.Method}  {context.Request.Path} {await ReadRequestBodyAsync(context.Request)} ", LogException = ex.Message, StackTrace = ex.StackTrace ?? string.Empty };
         await serviceLogPersistance.ErrorPersintanceService(log);
     }
+	private static async Task<string> ReadRequestBodyAsync(HttpRequest request)
+	{
+		request.Body.Position = 0; 
+		using (StreamReader reader = new(request.Body, leaveOpen: true))
+		{
+			string requestBody = await reader.ReadToEndAsync();
+			request.Body.Position = 0; 
+			return requestBody;
+		}
+	}
 }

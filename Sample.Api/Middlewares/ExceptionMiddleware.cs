@@ -1,5 +1,6 @@
 ﻿using Sample.Domain.Constants;
 using Sample.Domain.CustomExceptions;
+using Sample.Domain.Models;
 using System.Net;
 using System.Text.Json;
 
@@ -73,7 +74,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         }
         if (string.IsNullOrEmpty(result) &&  env.IsDevelopment())
         {
-            result = JsonSerializer.Serialize(new GenericException(ex.Message, ex.StackTrace ?? string.Empty));
+			result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.INTERNAL_ERROR, Errors = [new(){ Code = statusCode.ToString(), Message = MiddlewareConstants.INTERNAL_ERROR }] });
             context.Response.StatusCode = statusCode;
         }
         else if(string.IsNullOrEmpty(result) && env.IsProduction())

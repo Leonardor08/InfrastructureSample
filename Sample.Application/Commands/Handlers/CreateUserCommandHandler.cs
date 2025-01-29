@@ -11,7 +11,7 @@ namespace Sample.Application.Commands.Handlers
         {
             User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
             User newUser = await _repository.CreateAsync(user);
-            Response<User> response = new() {  Success = true, Message = "",  Data = newUser };
+            Response response = new() {  Success = true, Message = "Error"};
             return response;
         }
     }

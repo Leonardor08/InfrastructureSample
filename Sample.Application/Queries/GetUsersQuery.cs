@@ -1,9 +1,9 @@
-﻿using Sample.Domain.Interfaces.Queries;
+﻿using MediatR;
 using Sample.Domain.Models;
 
 namespace Sample.Application.Queries
 {
-	public class GetUsersQuery: IQuery<List<User>>
+    public class GetUsersQuery: IRequest<Response<List<User>>>
 	{
 	}
 }

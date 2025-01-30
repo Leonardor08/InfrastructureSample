@@ -7,7 +7,7 @@ namespace Sample.Infraestructure.Validations
 {
     public class CreateUserValidations : ICreateUserValidations
 	{
-		public async Task ValidAsync(string name, string email, int number)
+		public async Task ValidAsync(string name, string email, string number)
 		{
 			(await new CreateUserValidator().ValidateAsync(new CreateUserModel
 			{
@@ -30,14 +30,13 @@ namespace Sample.Infraestructure.Validations
 				.EmailAddress().WithMessage(MessagesResource.EmailInvalidFormat);
 
 			RuleFor(x => x.Number)
-				.GreaterThan(0).WithMessage(MessagesResource.NumberMin);
-
-		}
+				.MinimumLength(10).WithMessage(MessagesResource.NameMinLength);
+        }
 	}
 	public class CreateUserModel
 	{
-		public string? Email { get; set; }
-		public string? Name { get; set; }
-		public int Number { get; set; }
+		public string Email { get; set; } = string.Empty;
+		public string Name { get; set; } = string.Empty;
+		public string Number { get; set; } = string.Empty;
 	}
 }

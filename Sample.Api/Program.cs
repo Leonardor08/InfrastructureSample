@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.SqlConfiguration(builder.Configuration);
 builder.Services.AddRepositoryDependency();
 builder.Services.AddUsersDependency();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

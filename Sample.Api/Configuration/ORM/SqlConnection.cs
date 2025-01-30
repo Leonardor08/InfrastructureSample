@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sample.Domain.Constants;
+using Sample.Domain.Resources.Constants;
 using Sample.Infraestructure.Data.EFDbContext;
 
 namespace Sample.Api.Configuration.ORM;

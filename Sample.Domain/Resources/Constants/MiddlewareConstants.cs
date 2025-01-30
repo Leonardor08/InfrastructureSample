@@ -1,4 +1,4 @@
-﻿namespace Sample.Domain.Constants
+﻿namespace Sample.Domain.Resources.Constants
 {
     public static class MiddlewareConstants
     {

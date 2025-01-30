@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Sample.Application.Validations;
+using Sample.Domain.Resources;
 using Sample.Infraestructure.Extensions;
 
 namespace Sample.Infraestructure.Validations
@@ -21,15 +22,15 @@ namespace Sample.Infraestructure.Validations
 		public CreateUserValidator()
 		{
 			RuleFor(x => x.Name)
-			   .NotEmpty().WithMessage("El nombre es obligatorio.")
-			   .MinimumLength(3).WithMessage("El nombre debe tener al menos 3 caracteres.");
+			   .NotEmpty().WithMessage(MessagesResource.NameIsRequerid)
+			   .MinimumLength(3).WithMessage(MessagesResource.NameMinLength);
 
 			RuleFor(x => x.Email)
-				.NotEmpty().WithMessage("El correo es obligatorio.")
-				.EmailAddress().WithMessage("Debe ser un correo válido.");
+				.NotEmpty().WithMessage(MessagesResource.EmailIsRequerid)
+				.EmailAddress().WithMessage(MessagesResource.EmailInvalidFormat);
 
 			RuleFor(x => x.Number)
-				.GreaterThan(0).WithMessage("El número debe ser mayor que 0.");
+				.GreaterThan(0).WithMessage(MessagesResource.NumberMin);
 
 		}
 	}

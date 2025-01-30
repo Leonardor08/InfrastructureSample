@@ -1,8 +1,9 @@
 ﻿using Sample.Application.Services;
-using Sample.Domain.Constants;
 using Sample.Domain.CustomExceptions;
 using Sample.Domain.Interfaces;
 using Sample.Domain.Models;
+using Sample.Domain.Resources.Constants;
+using System;
 using System.Net;
 using System.Text.Json;
 
@@ -41,27 +42,27 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
                 await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
 			case InvalidOperationException invalidOperationException:
-                result = JsonSerializer.Serialize(new GenericException(invalidOperationException.Message, MiddlewareConstants.INVALID_CODE_ERROR));
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = invalidOperationException.Message, Errors = [new() { Code= MiddlewareConstants.INVALID_CODE_ERROR , Message = invalidOperationException.Message }] });
                 context.Response.StatusCode = statusCode;
                 await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case UnauthorizedAccessException unauthorizedAccessException:
-                result = JsonSerializer.Serialize(new GenericException(unauthorizedAccessException.Message, MiddlewareConstants.UNAUTHORIZED_CODE_ERROR));
-                context.Response.StatusCode = statusCode;
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = unauthorizedAccessException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = unauthorizedAccessException.Message }] });
+				context.Response.StatusCode = statusCode;
                 await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case FormatException formatException:
-                result = JsonSerializer.Serialize(new GenericException(formatException.Message, MiddlewareConstants.FORMART_CODE_ERROR));
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = formatException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = formatException.Message }] });
                 context.Response.StatusCode = statusCode;
                 await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case TimeoutException timeOutException:
-                result = JsonSerializer.Serialize(new GenericException(timeOutException.Message, MiddlewareConstants.TIME_OUT_CODE_ERROR));
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = timeOutException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = timeOutException.Message }] });
                 context.Response.StatusCode = statusCode;
                 await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case IOException IOException:
-                result = JsonSerializer.Serialize(new GenericException(IOException.Message, MiddlewareConstants.IO_CODE_ERROR));
+				result = JsonSerializer.Serialize(new Response { Success = false, Message = IOException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = IOException.Message }] });
                 context.Response.StatusCode = statusCode;
                 break;
         }
@@ -73,8 +74,8 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         }
         else if(string.IsNullOrEmpty(result) && env.IsProduction())
         {
-            result = JsonSerializer.Serialize(new GenericException(ex.Message, string.Empty));
-            context.Response.StatusCode = statusCode;
+			result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.INTERNAL_ERROR, Errors = [new() { Code = statusCode.ToString(), Message = MiddlewareConstants.INTERNAL_ERROR }] });
+			context.Response.StatusCode = statusCode;
             await SavingExceptions(context, ex, serviceLogPersistance);
         }
 

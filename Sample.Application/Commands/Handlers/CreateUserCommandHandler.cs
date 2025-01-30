@@ -1,21 +1,24 @@
 ﻿using Sample.Domain.Interfaces;
-using Sample.Domain.Interfaces.Commands;
 using Sample.Domain.Interfaces.Validations;
 using Sample.Domain.Models;
+using MediatR;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class CreateUserCommandHandler(IRepository<User> repository, ICreateUserValidations createUserValidations) : ICommandHandler<CreateUserCommand, Response>
+    public class CreateUserCommandHandler(IRepository<User> repository, ICreateUserValidations createUserValidations) : IRequestHandler<CreateUserCommand, Response<User>>
     {
         private readonly IRepository<User> _repository = repository;
         private readonly ICreateUserValidations _createUserValidations = createUserValidations;
-        public async Task<Response> Handle(CreateUserCommand command)
-        {
-            await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
-            User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
-            await _repository.CreateAsync(user);
-            Response response = new() {  Success = true, Message = "Error"};
-            return response;
-        }
-    }
+        
+
+		public async Task<Response<User>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+		{
+
+			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
+			User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
+			await _repository.CreateAsync(user);
+			Response<User> response = new() { Success = true, Message = "Error",Data = user };
+			return response;
+		}
+	}
 }

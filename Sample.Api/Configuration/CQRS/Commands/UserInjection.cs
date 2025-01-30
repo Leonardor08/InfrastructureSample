@@ -1,4 +1,5 @@
-﻿using Sample.Application.Commands;
+﻿using MediatR;
+using Sample.Application.Commands;
 using Sample.Application.Commands.Handlers;
 using Sample.Application.Queries;
 using Sample.Application.Queries.Handlers;
@@ -14,7 +15,6 @@ namespace Sample.Api.Configuration.CQRS.Commands
     {
         public static IServiceCollection AddUsersDependency(this IServiceCollection services)
         {
-            services.AddScoped(typeof(ICommandHandler<CreateUserCommand, Response>), typeof(CreateUserCommandHandler));
             services.AddScoped(typeof(IQueryHandler<GetUsersQuery, List<User>>), typeof(GetUsersQueryHandler));
             services.AddScoped(typeof(IQueryHandler<GetUserByIdQuery, User>), typeof(GetUserByIdQueryHandler));
             services.AddTransient<ICreateUserValidations, CreateUserValidations>();

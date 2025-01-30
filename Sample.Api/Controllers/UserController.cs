@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
 using Sample.Application.Queries;
 using Sample.Domain.Interfaces.Commands;
@@ -9,18 +10,18 @@ namespace Sample.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(IServiceProvider serviceProvider) : ControllerBase
+    public class UserController(IServiceProvider serviceProvider, IMediator mediator) : ControllerBase
     {
-        private readonly IServiceProvider _serviceProvider = serviceProvider;
+		private readonly IMediator _mediator = mediator;
+		private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> CreateUser(CreateUserCommand command)
-        {
-            var service = _serviceProvider.GetRequiredService<ICommandHandler<CreateUserCommand, Response>>();
-            var response = await service.Handle(command);
-            return Ok(response);
-        }
+		{
+			var response = await _mediator.Send(command);
+			return Ok(response);
+		}
 
 		[HttpGet]
 		[Route("GetAll")]

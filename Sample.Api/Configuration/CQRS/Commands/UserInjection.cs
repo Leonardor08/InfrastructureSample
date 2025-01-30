@@ -2,9 +2,9 @@
 using Sample.Application.Commands.Handlers;
 using Sample.Application.Queries;
 using Sample.Application.Queries.Handlers;
-using Sample.Application.Validations;
 using Sample.Domain.Interfaces.Commands;
 using Sample.Domain.Interfaces.Queries;
+using Sample.Domain.Interfaces.Validations;
 using Sample.Domain.Models;
 using Sample.Infraestructure.Validations;
 

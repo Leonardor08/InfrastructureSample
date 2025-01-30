@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Sample.Application.Validations;
+using Sample.Domain.Interfaces.Validations;
 using Sample.Domain.Resources;
 using Sample.Infraestructure.Extensions;
 
 namespace Sample.Infraestructure.Validations
 {
-	public class CreateUserValidations : ICreateUserValidations
+    public class CreateUserValidations : ICreateUserValidations
 	{
 		public async Task ValidAsync(string name, string email, int number)
 		{

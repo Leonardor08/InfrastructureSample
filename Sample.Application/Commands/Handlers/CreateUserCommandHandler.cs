@@ -1,6 +1,6 @@
-﻿using Sample.Application.Validations;
-using Sample.Domain.Interfaces;
+﻿using Sample.Domain.Interfaces;
 using Sample.Domain.Interfaces.Commands;
+using Sample.Domain.Interfaces.Validations;
 using Sample.Domain.Models;
 
 namespace Sample.Application.Commands.Handlers
@@ -13,7 +13,7 @@ namespace Sample.Application.Commands.Handlers
         {
             await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
             User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
-            User newUser = await _repository.CreateAsync(user);
+            await _repository.CreateAsync(user);
             Response response = new() {  Success = true, Message = "Error"};
             return response;
         }

@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
 using Sample.Application.Queries;
-using Sample.Domain.Interfaces.Commands;
-using Sample.Domain.Interfaces.Queries;
 using Sample.Domain.Models;
 
 namespace Sample.Api.Controllers
@@ -23,21 +21,28 @@ namespace Sample.Api.Controllers
 			return Ok(response);
 		}
 
-		[HttpGet]
+        [HttpPost]
+        [Route("Edit")]
+        public async Task<IActionResult> EditUser(EditUserCommand command)
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+
+        [HttpGet]
 		[Route("GetAll")]
 		public async Task<IActionResult> GetallUsers()
 		{
-			var service = _serviceProvider.GetRequiredService<IQueryHandler<GetUsersQuery, List<User>>>();
-            var response = await service.Handle(new ());
+            var response = await _mediator.Send(new GetUsersQuery());
 			return Ok(response);
 		}
 
         [HttpGet("GetById")]
         public async Task<IActionResult> GetUsersById([FromQuery] Guid query)
         {
-            var service = _serviceProvider.GetRequiredService<IQueryHandler<GetUserByIdQuery, User>>();
-            var resposne = await service.Handle(new() { Id = query });
-            return Ok(resposne);
+            GetUserByIdQuery getUserById = new() { Id = query };
+            var response = await _mediator.Send(getUserById);
+            return Ok(response);
         }
     }
 }

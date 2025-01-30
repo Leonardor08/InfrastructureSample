@@ -2,7 +2,6 @@ using Sample.Api.Configuration.CQRS.Commands;
 using Sample.Api.Configuration.GenericInjections;
 using Sample.Api.Configuration.ORM;
 using Sample.Api.Middlewares;
-using Sample.Application.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.SqlConfiguration(builder.Configuration);
 builder.Services.AddRepositoryDependency();
 builder.Services.AddUsersDependency();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserCommand>());
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

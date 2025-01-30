@@ -1,9 +1,9 @@
-﻿using Sample.Domain.Interfaces.Queries;
+﻿using MediatR;
 using Sample.Domain.Models;
 
 namespace Sample.Application.Queries
 {
-    public class GetUserByIdQuery : IQuery<User>
+    public class GetUserByIdQuery : IRequest<Response<User>>
     {
         public Guid Id { get; set; }
     }

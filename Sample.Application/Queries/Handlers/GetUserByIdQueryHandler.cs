@@ -1,16 +1,16 @@
-﻿using Sample.Domain.Interfaces;
-using Sample.Domain.Interfaces.Queries;
+﻿using MediatR;
+using Sample.Domain.Interfaces;
 using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers
 {
-    public class GetUserByIdQueryHandler(IRepository<User> repository) : IQueryHandler<GetUserByIdQuery, User>
+    public class GetUserByIdQueryHandler(IRepository<User> repository) : IRequestHandler<GetUserByIdQuery, Response<User>>
     {
         private readonly IRepository<User> _repository = repository;
 
-        public async Task<Response<User>> Handle(GetUserByIdQuery query)
+        public async Task<Response<User>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            User user = await _repository.FindByIdAsync(query.Id);
+            User user = await _repository.FindByIdAsync(request.Id);
             return new() { Data = user, Message = "", Success = true };
         }
     }

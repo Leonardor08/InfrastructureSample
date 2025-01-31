@@ -7,7 +7,7 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+//log configuration
 Log.Logger = new LoggerConfiguration()
 	.MinimumLevel.Information()  
 	.MinimumLevel.Override("Microsoft", LogEventLevel.Warning) 

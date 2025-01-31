@@ -9,12 +9,14 @@ using System.Text.Json;
 
 namespace Sample.Api.Middlewares;
 
-public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
+public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILogger<ExceptionMiddleware> logger)
 {
     private readonly RequestDelegate _next = next;
     private readonly IHostEnvironment _env = env;
+	private readonly ILogger<ExceptionMiddleware> _logger = logger;
 
-    public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog> repository)
+
+	public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog> repository)
     {
 		context.Request.EnableBuffering();
 		try
@@ -27,7 +29,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env, IRepository<ErrorLog> repository)
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env, IRepository<ErrorLog> repository)
     {
         ExceptionErrorPersistence serviceLogPersistance = new(repository);
         context.Response.ContentType = MiddlewareConstants.JSON;
@@ -82,19 +84,20 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
         await context.Response.WriteAsync(result);
     }
 
-    private static async Task SavingExceptions(HttpContext context, Exception ex, ExceptionErrorPersistence serviceLogPersistance)
+    private async Task SavingExceptions(HttpContext context, Exception ex, ExceptionErrorPersistence serviceLogPersistance)
     {
+		
 		ErrorLog log = new() { Request = $" {context.Request.Method}  {context.Request.Path} {await ReadRequestBodyAsync(context.Request)} ", LogException = ex.Message, StackTrace = ex.StackTrace ?? string.Empty };
-        await serviceLogPersistance.ErrorPersintanceService(log);
-    }
+		_logger.LogError("ERROR en  {Path}, error {error}",log.Request,ex.Message );
+
+		// await serviceLogPersistance.ErrorPersintanceService(log);
+	}
 	private static async Task<string> ReadRequestBodyAsync(HttpRequest request)
 	{
-		request.Body.Position = 0; 
-		using (StreamReader reader = new(request.Body, leaveOpen: true))
-		{
-			string requestBody = await reader.ReadToEndAsync();
-			request.Body.Position = 0; 
-			return requestBody;
-		}
+		request.Body.Position = 0;
+		using StreamReader reader = new(request.Body, leaveOpen: true);
+		string requestBody = await reader.ReadToEndAsync();
+		request.Body.Position = 0;
+		return requestBody;
 	}
 }

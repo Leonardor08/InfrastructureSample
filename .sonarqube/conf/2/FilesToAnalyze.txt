@@ -1,0 +1,14 @@
+﻿D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\CreateUserCommand.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\EditUserCommand.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\Handlers\CreateUserCommandHandler.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\Handlers\EditUserCommandHandler.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\Handlers\LoginCommandHandler.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Commands\LoginCommand.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Queries\GetUserByIdQuery.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Queries\GetUsersQuery.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Queries\Handlers\GetUserByIdQueryHandler.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Queries\Handlers\GetUsersQueryHandler.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Services\ExceptionErrorPersistence.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Strategies\EmailAuthStrategy.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Strategies\FacebookAuthStrategy.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Application\Strategies\GoogleAuthStrategy.cs

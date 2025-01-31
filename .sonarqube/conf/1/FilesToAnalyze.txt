@@ -1,0 +1,14 @@
+﻿D:\OPI\REPOSITORIOS\Sample\Sample.Domain\CustomExceptions\GenericException.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Interfaces\Auth\IAuthStrategy.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Interfaces\IRepository.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Interfaces\Validations\ICreateUserValidations.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\Entity.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\Error.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\ErrorLog.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\Response.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\User.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Models\ValidatorException.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Resources\Constants\DomainConstants.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Resources\Constants\MiddlewareConstants.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\ValueObjects\AuthTypes.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Domain\Resources\MessagesResource.resx

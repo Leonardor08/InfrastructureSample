@@ -1,0 +1,15 @@
+﻿D:\OPI\REPOSITORIOS\Sample\Sample.Api\Configuration\CQRS\Commands\UserInjection.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Configuration\GenericInjections\Repository.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Configuration\ORM\SqlConnection.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Controllers\UserController.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Middlewares\AuthenticatorMiddleware.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Middlewares\ExceptionMiddleware.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Program.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\obj\Debug\net8.0\Sample.Api.GlobalUsings.g.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\obj\Debug\net8.0\Sample.Api.AssemblyInfo.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\obj\Debug\net8.0\Sample.Api.MvcApplicationPartsAssemblyInfo.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\appsettings.Development.json
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\appsettings.json
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Sample.Api.http
+D:\OPI\REPOSITORIOS\Sample\Sample.Api\Properties\launchSettings.json

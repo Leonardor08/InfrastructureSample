@@ -1,0 +1,11 @@
+﻿D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Data\EFDbContext\AppDbContext.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Extensions\ValidExtension.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250126230359_InitDb.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250126230359_InitDb.Designer.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250129190812_ErrorLog Entity.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250129190812_ErrorLog Entity.Designer.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250130201311_number refactor to entities.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\20250130201311_number refactor to entities.Designer.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Migrations\AppDbContextModelSnapshot.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Repository\GenericRepository.cs
+D:\OPI\REPOSITORIOS\Sample\Sample.Infraestructure\Validations\CreateUserValidations.cs

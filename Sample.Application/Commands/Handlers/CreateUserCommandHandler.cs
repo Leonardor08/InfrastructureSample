@@ -14,7 +14,7 @@ namespace Sample.Application.Commands.Handlers
 		public async Task<Response<User>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
 		{
 
-			//await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
+			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
 			User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
 			await _repository.CreateAsync(user);
 			Response<User> response = new() { Success = true, Message = "Error",Data = user };

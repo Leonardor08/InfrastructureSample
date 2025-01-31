@@ -6,20 +6,14 @@ using Serilog;
 using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
-var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
-if (!Directory.Exists(logDirectory))
-{
-	Directory.CreateDirectory(logDirectory);
-}
 
-var logFilePath = Path.Combine(logDirectory, "application.log");
 
 Log.Logger = new LoggerConfiguration()
 	.MinimumLevel.Information()  
 	.MinimumLevel.Override("Microsoft", LogEventLevel.Warning) 
 	.MinimumLevel.Override("System", LogEventLevel.Warning)     
 	.WriteTo.Console()
-	.WriteTo.File(logFilePath, rollingInterval: RollingInterval.Infinite,
+	.WriteTo.File("logs/application.log", rollingInterval: RollingInterval.Infinite,
 		retainedFileCountLimit: null,
 		fileSizeLimitBytes: null,
 		buffered: false, 

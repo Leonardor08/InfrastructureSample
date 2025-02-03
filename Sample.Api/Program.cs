@@ -1,6 +1,4 @@
-using Sample.Api.Configuration.CQRS.Commands;
-using Sample.Api.Configuration.GenericInjections;
-using Sample.Api.Configuration.ORM;
+using Sample.Api.Configuration;
 using Sample.Api.Middlewares;
 using Serilog;
 using Serilog.Events;
@@ -22,15 +20,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services to the container.
-builder.Services.SqlConfiguration(builder.Configuration);
-builder.Services.AddRepositoryDependency();
-builder.Services.AddUsersDependency();
-builder.Host.UseSerilog();
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Inject();
 
 var app = builder.Build();
 

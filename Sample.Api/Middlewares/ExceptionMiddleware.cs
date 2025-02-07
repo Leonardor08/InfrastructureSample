@@ -1,9 +1,7 @@
 ﻿using Sample.Application.Services;
-using Sample.Domain.CustomExceptions;
 using Sample.Domain.Interfaces;
 using Sample.Domain.Models;
 using Sample.Domain.Resources.Constants;
-using System;
 using System.Net;
 using System.Text.Json;
 
@@ -89,8 +87,6 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
 		
 		ErrorLog log = new() { Request = $" {context.Request.Method}  {context.Request.Path} {await ReadRequestBodyAsync(context.Request)} ", LogException = ex.Message, StackTrace = ex.StackTrace ?? string.Empty };
 		_logger.LogError("ERROR en  {Path}, error {error}",log.Request,ex.Message );
-
-		// await serviceLogPersistance.ErrorPersintanceService(log);
 	}
 	private static async Task<string> ReadRequestBodyAsync(HttpRequest request)
 	{

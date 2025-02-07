@@ -2,16 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
 using Sample.Application.Queries;
-using Sample.Domain.Models;
 
 namespace Sample.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController(IServiceProvider serviceProvider, IMediator mediator) : ControllerBase
+    public class UserController(IMediator mediator) : ControllerBase
     {
 		private readonly IMediator _mediator = mediator;
-		private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         [HttpPost]
         [Route("Create")]

@@ -1,5 +1,6 @@
 ﻿using Sample.Application.Commands;
 using Sample.Test.Infraestructure;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -13,11 +14,10 @@ namespace Sample.Test.ApiTests
         public async Task Crear_Usuarios_DeberiaRetornar200()
         {
             var id = Guid.Parse("44197386-3893-4505-869d-04ea2187d293");
-            CreateUserCommand userCommand = new() { Id = id, Name = "Oscar Test", Email = "Test@hotmail.com", Number = "3212246801" };
 
-            HttpContent httpContent = new StringContent(JsonSerializer.Serialize(userCommand), Encoding.UTF8, "application/json");
+            var userJson = new { Id = id, Name = "Oscar Test", Email = "Test@hotmail.com", Number = "3212246801" };
 
-            var response = await _client.PostAsync("/api/User/Create", httpContent);
+            var response = await _client.PostAsJsonAsync("/api/User/Create", userJson);
 
             response.EnsureSuccessStatusCode();
 

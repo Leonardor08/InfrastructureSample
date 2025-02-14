@@ -26,6 +26,11 @@ public class GenericWebApplicationFactory<TStartup> : WebApplicationFactory<TSta
             using IServiceScope scope = configurationServiceProvider.CreateScope();
             AppDbContext dataBaseContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dataBaseContext.Database.EnsureCreated();
+            if (!dataBaseContext.Users.Any())
+            {
+                dataBaseContext.Users.Add(new() { Id = Guid.Parse("44197386-3893-4505-869d-04ea2187d293"), Name = "Oscar Test", Email = "Test@hotmail.com", Number = "3212246801" });
+                dataBaseContext.SaveChanges();
+            }
         });    
     }
 }

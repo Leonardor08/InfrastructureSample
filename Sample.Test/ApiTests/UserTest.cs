@@ -1,8 +1,5 @@
-﻿using Sample.Application.Commands;
-using Sample.Test.Infraestructure;
+﻿using Sample.Test.Infraestructure;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace Sample.Test.ApiTests
 {

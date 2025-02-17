@@ -1,10 +1,7 @@
-﻿using Azure.Core;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
 using Sample.Domain.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Infraestructure.Data.AdoDbContext;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Sample.Infraestructure.Repository

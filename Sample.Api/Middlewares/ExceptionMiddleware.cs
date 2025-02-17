@@ -1,5 +1,5 @@
 ﻿using Sample.Application.Services;
-using Sample.Domain.Interfaces;
+using Sample.Domain.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Domain.Resources.Constants;
 using System.Net;

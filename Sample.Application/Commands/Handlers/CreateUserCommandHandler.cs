@@ -1,7 +1,7 @@
-﻿using Sample.Domain.Interfaces;
-using Sample.Domain.Interfaces.Validations;
+﻿using Sample.Domain.Interfaces.Validations;
 using Sample.Domain.Models;
 using MediatR;
+using Sample.Domain.Interfaces.Repositories;
 
 namespace Sample.Application.Commands.Handlers
 {

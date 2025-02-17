@@ -1,4 +1,4 @@
-﻿using Sample.Domain.Interfaces;
+﻿using Sample.Domain.Interfaces.Repositories;
 using Sample.Domain.Models;
 
 namespace Sample.Application.Services

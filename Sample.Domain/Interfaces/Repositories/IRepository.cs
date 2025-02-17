@@ -1,7 +1,7 @@
 ﻿using Sample.Domain.Models;
 using System.Linq.Expressions;
 
-namespace Sample.Domain.Interfaces;
+namespace Sample.Domain.Interfaces.Repositories;
 
 public interface IRepository<T> where T : Entity
 {

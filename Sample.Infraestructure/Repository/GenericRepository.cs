@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sample.Domain.Interfaces;
+using Sample.Domain.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Infraestructure.Data.EFDbContext;
 using System.Linq.Expressions;

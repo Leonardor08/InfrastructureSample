@@ -9,6 +9,7 @@ public static class Repository
     public static IServiceCollection AddRepositoryDependency(this IServiceCollection services)
     {
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-        return services;
+		services.AddScoped(typeof(IAdoRepository<>), typeof(GenericAdoRepository<>));
+		return services;
     }
 }

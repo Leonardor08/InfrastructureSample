@@ -35,7 +35,7 @@ namespace Sample.Infraestructure.Repository
             }
         }
 
-        public List<T> ReadAllAsync()
+        public async  Task<List<T>> ReadAllAsync()
         {
             List<T> list = [];
             try
@@ -46,7 +46,7 @@ namespace Sample.Infraestructure.Repository
 
                 using OracleCommand command = _context.CreateCommand(selectQuery);
 
-                using OracleDataReader reader = command.ExecuteReader();
+                using OracleDataReader reader =await command.ExecuteReaderAsync();
 
                 while (reader.Read())
                     list.Add(GenericAdoRepository<T>.MapEntity(reader));
@@ -63,7 +63,7 @@ namespace Sample.Infraestructure.Repository
             }
         }
 
-        public T FindByIdAsync(string Property, Guid id)
+        public async Task<T> FindByIdAsync(string Property, Guid id)
         {
             T? entity = default;
 
@@ -75,7 +75,7 @@ namespace Sample.Infraestructure.Repository
 
                 using OracleCommand command = _context.CreateCommand(selectQuery);
 
-                using OracleDataReader reader = command.ExecuteReader();
+                using OracleDataReader reader =await command.ExecuteReaderAsync();
 
                 while (reader.Read())
                     entity = GenericAdoRepository<T>.MapEntity(reader);

@@ -35,35 +35,40 @@ namespace Sample.Infraestructure.Repository
             }
         }
 
-        public async  Task<List<T>> ReadAllAsync()
-        {
-            List<T> list = [];
-            try
-            {
-                _context.BeginTransaction();
+		public async Task<List<T>> ReadAllAsync()
+		{
+			List<T> list = new();
 
-                string selectQuery = $"SELECT * FROM {_tableName})";
+			try
+			{
+				// No hay transacción en SELECT
+				string selectQuery = $"SELECT * FROM USERS";
 
-                using OracleCommand command = _context.CreateCommand(selectQuery);
+				using OracleCommand command = _context.CreateCommand(selectQuery);
+				using (OracleDataReader reader = await (command.ExecuteReaderAsync())){
+					while (reader.Read())
+					{
+						list.Add(GenericAdoRepository<T>.MapEntity(reader));
+					}
+				}
 
-                using OracleDataReader reader =await command.ExecuteReaderAsync();
+				
+			}
+			catch (Exception)
+			{
+				_context.Rollback(); // Solo si hay transacción activa
+				throw;
+			}
+			finally
+			{
+				// Se cierra la conexión en `finally`, asegurando que el reader la use primero
+				_context.Dispose();
+			}
 
-                while (reader.Read())
-                    list.Add(GenericAdoRepository<T>.MapEntity(reader));
+			return list;
+		}
 
-                _context.Dispose();
-
-                return list;
-            }
-            catch (Exception)
-            {
-                _context.Rollback();
-                _context.Dispose();
-                throw;
-            }
-        }
-
-        public async Task<T> FindByIdAsync(string Property, Guid id)
+		public async Task<T> FindByIdAsync(string Property, Guid id)
         {
             T? entity = default;
 
@@ -159,7 +164,11 @@ namespace Sample.Infraestructure.Repository
 
             foreach (PropertyInfo prop in typeof(T).GetProperties())
                 if (!reader.IsDBNull(reader.GetOrdinal(prop.Name)))
+                {
+                    var a = prop.Name;
                     prop.SetValue(entity, reader[prop.Name]);
+
+                }
 
             return entity;
         }        

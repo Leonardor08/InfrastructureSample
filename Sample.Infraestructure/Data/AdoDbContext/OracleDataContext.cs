@@ -7,15 +7,18 @@ namespace Sample.Infraestructure.Data.AdoDbContext
         private readonly OracleConnection _connection = connection;
         private OracleTransaction? _transaction = transaction;
 
-        public OracleCommand CreateCommand(string sqlQuery)
-        {
-            OracleCommand command = _connection.CreateCommand();
-            command.CommandText = sqlQuery;
-            command.Transaction = _transaction;
-            return command;
-        }
+		public OracleCommand CreateCommand(string sqlQuery)
+		{
+			if (_connection.State != System.Data.ConnectionState.Open)
+				_connection.Open();  
 
-        public void BeginTransaction()
+			OracleCommand command = _connection.CreateCommand();
+			command.CommandText = sqlQuery;
+			command.Transaction = _transaction;
+			return command;
+		}
+
+		public void BeginTransaction()
         {
             _transaction = _connection.BeginTransaction();
         }

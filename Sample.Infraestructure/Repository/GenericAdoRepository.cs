@@ -1,4 +1,5 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Oracle.ManagedDataAccess.Client;
 using Sample.Domain.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Infraestructure.Data.AdoDbContext;
@@ -41,16 +42,24 @@ namespace Sample.Infraestructure.Repository
 
 			try
 			{
-				// No hay transacción en SELECT
 				string selectQuery = $"SELECT * FROM USERS";
 
-				using OracleCommand command = _context.CreateCommand(selectQuery);
-				using (OracleDataReader reader = await (command.ExecuteReaderAsync())){
-					while (reader.Read())
+				using (OracleCommand command = _context.CreateCommand(selectQuery))
+                {
+					using (var reader = await (command.ExecuteReaderAsync()))
 					{
-						list.Add(GenericAdoRepository<T>.MapEntity(reader));
+                        foreach (var item in reader)
+                        {
+                            Type dataRecordType = item.GetType();
+                            FieldInfo values = dataRecordType.GetField("_values", BindingFlags.NonPublic | BindingFlags.Instance)!;
+                            object value = values.GetValue(item)!;
+                            if(value is object[] valuesArray)
+								list.Add(GenericAdoRepository<T>.MapEntity(valuesArray));				
+						}
+
 					}
-				}
+				} 
+				
 
 				
 			}
@@ -82,8 +91,8 @@ namespace Sample.Infraestructure.Repository
 
                 using OracleDataReader reader =await command.ExecuteReaderAsync();
 
-                while (reader.Read())
-                    entity = GenericAdoRepository<T>.MapEntity(reader);
+                //while (reader.Read())
+                //    entity = GenericAdoRepository<T>.MapEntity(reader);
 
                 _context.Dispose();
 
@@ -158,19 +167,20 @@ namespace Sample.Infraestructure.Repository
             return string.Join(", ", properties.Select(propertyInfo => $":{propertyInfo.Name}"));
         }
 
-        private static T MapEntity(OracleDataReader reader)
+        private static T MapEntity(object[] reader)
         {
             T entity = Activator.CreateInstance<T>();
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            for (int i = 0; i < reader.Length; i++)
+            {
+                if(properties[i].PropertyType == typeof(Guid))
+					properties[i].SetValue(entity, Guid.Parse(reader[i].ToString()!));
+                else
+					properties[i].SetValue(entity, Convert.ChangeType(reader[i], properties[i].PropertyType));
+			}
 
-            foreach (PropertyInfo prop in typeof(T).GetProperties())
-                if (!reader.IsDBNull(reader.GetOrdinal(prop.Name)))
-                {
-                    var a = prop.Name;
-                    prop.SetValue(entity, reader[prop.Name]);
 
-                }
-
-            return entity;
+			return entity;
         }        
 
         private static string MapSetClause()

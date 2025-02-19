@@ -5,19 +5,19 @@ using Sample.Domain.Interfaces.Repositories;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class CreateUserCommandHandler(IRepository<User> repository, ICreateUserValidations createUserValidations) : IRequestHandler<CreateUserCommand, Response<User>>
+    public class CreateUserCommandHandler(IAdoRepository<Users> repository, ICreateUserValidations createUserValidations) : IRequestHandler<CreateUserCommand, Response<Users>>
     {
-        private readonly IRepository<User> _repository = repository;
+        private readonly IAdoRepository<Users> _repository = repository;
         private readonly ICreateUserValidations _createUserValidations = createUserValidations;
         
 
-		public async Task<Response<User>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+		public async Task<Response<Users>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
 		{
 
-			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
-			User user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
+			//await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
+			Users user = new() { Id = command.Id, Name = command.Name, Number = command.Number, Email = command.Email };
 			await _repository.CreateAsync(user);
-			Response<User> response = new() { Success = true, Message = "Error",Data = user };
+			Response<Users> response = new() { Success = true, Message = "Error",Data = user };
 			return response;
 		}
 	}

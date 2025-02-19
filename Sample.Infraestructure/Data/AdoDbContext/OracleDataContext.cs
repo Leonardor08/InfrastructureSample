@@ -9,19 +9,17 @@ namespace Sample.Infraestructure.Data.AdoDbContext
 
 		public OracleCommand CreateCommand(string sqlQuery)
 		{
-			if (_connection.State != System.Data.ConnectionState.Open)
-				_connection.Open();  
-
 			OracleCommand command = _connection.CreateCommand();
 			command.CommandText = sqlQuery;
-			command.Transaction = _transaction;
 			return command;
 		}
 
 		public void BeginTransaction()
         {
-            _transaction = _connection.BeginTransaction();
-        }
+			if (_connection.State != System.Data.ConnectionState.Open)
+				_connection.Open();
+			_transaction = _connection.BeginTransaction();
+		}
 
         public void Commit()
         {

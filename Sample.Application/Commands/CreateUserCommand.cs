@@ -3,7 +3,7 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Commands
 {
-    public class CreateUserCommand : IRequest<Response<User>>
+    public class CreateUserCommand : IRequest<Response<Users>>
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -3,7 +3,7 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries
 {
-    public class GetUsersQuery: IRequest<Response<List<User>>>
+    public class GetUsersQuery: IRequest<Response<List<Users>>>
 	{
 	}
 }

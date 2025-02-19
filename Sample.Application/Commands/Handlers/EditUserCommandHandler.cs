@@ -4,12 +4,12 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class EditUserCommandHandler(IRepository<User> repository) : IRequestHandler<EditUserCommand, Response<User>>
+    public class EditUserCommandHandler(IRepository<Users> repository) : IRequestHandler<EditUserCommand, Response<Users>>
     {
-        private readonly IRepository<User> _repository = repository;
-        public async Task<Response<User>> Handle(EditUserCommand request, CancellationToken cancellationToken)
+        private readonly IRepository<Users> _repository = repository;
+        public async Task<Response<Users>> Handle(EditUserCommand request, CancellationToken cancellationToken)
         {
-            User targetUser = await _repository.FindByIdAsync(request.Id) ?? new();
+            Users targetUser = await _repository.FindByIdAsync(request.Id) ?? new();
 
             UserMapper(request, targetUser);
 
@@ -18,7 +18,7 @@ namespace Sample.Application.Commands.Handlers
             return new() { Data = targetUser, Message = "", Success = true };
         }
 
-        private static User UserMapper(EditUserCommand request, User targetUser)
+        private static Users UserMapper(EditUserCommand request, Users targetUser)
         {
             targetUser.Name = request.Name;
             targetUser.Email = request.Email;

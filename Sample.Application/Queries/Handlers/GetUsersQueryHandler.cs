@@ -4,10 +4,10 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers
 {
-    public class GetUsersQueryHandler(IAdoRepository<User> repository) : IRequestHandler<GetUsersQuery, Response<List<User>>>
+    public class GetUsersQueryHandler(IAdoRepository<Users> repository) : IRequestHandler<GetUsersQuery, Response<List<Users>>>
 	{
-		private readonly IAdoRepository<User> _repository = repository;
-        public async  Task<Response<List<User>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+		private readonly IAdoRepository<Users> _repository = repository;
+        public async  Task<Response<List<Users>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _repository.ReadAllAsync();
             return new() { Data = users, Message = "", Success = true };

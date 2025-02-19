@@ -6,7 +6,7 @@ namespace Sample.Application.Commands
 {
 	public class LoginCommand: IRequest<Response<bool>>
 	{
-		public User User { get; set; } = new();
+		public Users User { get; set; } = new();
 		public string Credentials {  get; set; } = string.Empty;
 		public  AuthTypes AuthTypes { get; set; }
 	}

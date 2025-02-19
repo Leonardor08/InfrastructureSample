@@ -5,7 +5,7 @@ namespace Sample.Application.Strategies
 {
 	public class FacebookAuthStrategy : IAuthStrategy
 	{
-		public Task<bool> Authenticate(User user, string credential)
+		public Task<bool> Authenticate(Users user, string credential)
 		{
 			throw new NotImplementedException();
 		}

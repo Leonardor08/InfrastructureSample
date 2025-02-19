@@ -33,8 +33,11 @@ namespace Sample.Infraestructure.Repository
 			catch (Exception)
 			{
 				_context.Rollback();
-				_context.Dispose();
 				throw;
+			}
+			finally
+			{
+				_context.Dispose();
 			}
 		}
 
@@ -46,19 +49,14 @@ namespace Sample.Infraestructure.Repository
 			{
 				_context.BeginTransaction();
 				string selectQuery = $"SELECT * FROM {_tableName}";
-
 				using OracleCommand command = _context.CreateCommand(selectQuery);
-				using var reader = await (command.ExecuteReaderAsync());
-				foreach (var item in reader)
+				using OracleDataReader reader = await command.ExecuteReaderAsync();
+				while (await reader.ReadAsync())
 				{
-					Type dataRecordType = item.GetType();
-					FieldInfo values = dataRecordType.GetField("_values", BindingFlags.NonPublic | BindingFlags.Instance)!;
-					object value = values.GetValue(item)!;
-					if (value is object[] valuesArray)
-						list.Add(GenericAdoRepository<T>.MapEntity(valuesArray));
+					list.Add(MapEntity(reader));
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				_context.Rollback();
 				throw;
@@ -78,22 +76,12 @@ namespace Sample.Infraestructure.Repository
 			{
 				_context.BeginTransaction();
 				string selectQuery = $"SELECT * FROM {_tableName} WHERE {Property} = '{id}'";
-
 				using OracleCommand command = _context.CreateCommand(selectQuery);
-
 				using OracleDataReader reader = await command.ExecuteReaderAsync();
-
-				foreach (var item in reader)
+				while (await reader.ReadAsync())
 				{
-					Type dataRecordType = item.GetType();
-					FieldInfo values = dataRecordType.GetField("_values", BindingFlags.NonPublic | BindingFlags.Instance)!;
-					object value = values.GetValue(item)!;
-					if (value is object[] valuesArray)
-						entity = (GenericAdoRepository<T>.MapEntity(valuesArray));
+					entity = (MapEntity(reader));
 				}
-
-				_context.Dispose();
-
 				return entity!;
 			}
 			catch (Exception)
@@ -127,8 +115,11 @@ namespace Sample.Infraestructure.Repository
 			catch (Exception)
 			{
 				_context.Rollback();
-				_context.Dispose();
 				throw;
+			}
+			finally
+			{
+				_context.Dispose();
 			}
 		}
 
@@ -156,11 +147,6 @@ namespace Sample.Infraestructure.Repository
 			}
 		}
 
-		private static string GetColumns()
-		{
-			PropertyInfo[] properties = typeof(T).GetProperties();
-			return string.Join(", ", properties.Select(propertyInfo => propertyInfo.Name));
-		}
 
 		private static string GetParameters(T entity)
 		{
@@ -181,24 +167,35 @@ namespace Sample.Infraestructure.Repository
 			return string.Join(", ", values);
 		}
 
-		private static T MapEntity(object[] reader)
+		private static T MapEntity(OracleDataReader reader)
 		{
 			T entity = Activator.CreateInstance<T>();
 			PropertyInfo[] properties = typeof(T).GetProperties();
-			for (int i = 0; i < reader.Length; i++)
+
+			for (int i = 0; i < properties.Length; i++)
 			{
-				if (properties[i].PropertyType == typeof(Guid))
-					properties[i].SetValue(entity, Guid.Parse(reader[i].ToString()!));
+				if (reader[properties[i].Name] == DBNull.Value)
+				{
+					properties[i].SetValue(entity, null);
+				}
 				else
-					properties[i].SetValue(entity, Convert.ChangeType(reader[i], properties[i].PropertyType));
+				{
+					object value = reader[properties[i].Name];
+
+					if (properties[i].PropertyType == typeof(Guid))
+						properties[i].SetValue(entity, Guid.Parse(value.ToString()!));
+					else
+						properties[i].SetValue(entity, Convert.ChangeType(value, Nullable.GetUnderlyingType(properties[i].PropertyType) ?? properties[i].PropertyType));
+				}
 			}
+
 			return entity;
 		}
-
 		private static string MapSetClause()
 		{
 			PropertyInfo[] properties = typeof(T).GetProperties();
 			return string.Join(" ,", properties.Select(propertyInfo => $"{propertyInfo.Name} = :{propertyInfo.Name}"));
 		}
 	}
+
 }

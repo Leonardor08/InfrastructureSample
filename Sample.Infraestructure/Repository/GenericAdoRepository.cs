@@ -102,7 +102,7 @@ namespace Sample.Infraestructure.Repository
 			{
 				_context.BeginTransaction();
 
-				string updateQuery = $"UPDATE {_tableName} SET {MapSetClause(entity)} WHERE {pKProperty} = {id}";
+				string updateQuery = $"UPDATE {_tableName} SET {MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
 
 				using OracleCommand command = _context.CreateCommand(updateQuery);
 

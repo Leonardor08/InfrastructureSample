@@ -22,7 +22,7 @@ namespace Sample.Application.Commands.Handlers
         {
             targetUser.Name = request.Name;
             targetUser.Email = request.Email;
-            targetUser.Number = request.Number;
+            targetUser.Phone = request.Phone;
 
             return targetUser;
         }

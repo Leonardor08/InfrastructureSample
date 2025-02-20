@@ -11,8 +11,8 @@ namespace Sample.Application.Queries.Handlers
         public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
 
-			Users user = await _repository.FindByIdAsync("id", request.Id);
-            return new() { Data = user, Message = "", Success = true };
+            await _repository.DeleteAsync("id", request.Id);
+            return new() { Data = {}, Message = "", Success = true };
         }
     }
 }

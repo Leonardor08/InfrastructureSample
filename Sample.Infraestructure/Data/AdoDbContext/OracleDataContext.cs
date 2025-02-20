@@ -16,8 +16,9 @@ namespace Sample.Infraestructure.Data.AdoDbContext
 
 		public void BeginTransaction()
         {
-			if (_connection.State != System.Data.ConnectionState.Open)
-				_connection.Open();
+			if (_connection.State == System.Data.ConnectionState.Open)
+                _connection.Close();
+			_connection.Open();
 			_transaction = _connection.BeginTransaction();
 		}
 
@@ -37,7 +38,6 @@ namespace Sample.Infraestructure.Data.AdoDbContext
         {
             _transaction?.Dispose();
             _connection?.Close();
-            _connection?.Dispose();
         }
     }
 }

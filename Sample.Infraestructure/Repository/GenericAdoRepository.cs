@@ -102,7 +102,7 @@ namespace Sample.Infraestructure.Repository
 			{
 				_context.BeginTransaction();
 
-				string updateQuery = $"UPDATE {_tableName} SET {MapSetClause()} WHERE {pKProperty} = {id}";
+				string updateQuery = $"UPDATE {_tableName} SET {MapSetClause(entity)} WHERE {pKProperty} = {id}";
 
 				using OracleCommand command = _context.CreateCommand(updateQuery);
 
@@ -129,7 +129,7 @@ namespace Sample.Infraestructure.Repository
 			{
 				_context.BeginTransaction();
 
-				string deleteQuery = $"DELETE * FROM {_tableName} WHERE {property} = {id}";
+				string deleteQuery = $"DELETE FROM {_tableName} WHERE {property} = '{id}'";
 
 				using OracleCommand command = _context.CreateCommand(deleteQuery);
 
@@ -142,8 +142,11 @@ namespace Sample.Infraestructure.Repository
 			catch (Exception)
 			{
 				_context.Rollback();
-				_context.Dispose();
 				throw;
+			}
+			finally
+			{
+				_context.Dispose();
 			}
 		}
 
@@ -191,10 +194,11 @@ namespace Sample.Infraestructure.Repository
 
 			return entity;
 		}
-		private static string MapSetClause()
+		private static string MapSetClause(T entity)
 		{
+			entity.UpdateDate = DateTime.Now;
 			PropertyInfo[] properties = typeof(T).GetProperties();
-			return string.Join(" ,", properties.Select(propertyInfo => $"{propertyInfo.Name} = :{propertyInfo.Name}"));
+			return string.Join(" ,", properties.Select(propertyInfo => $"{propertyInfo.Name} = '{propertyInfo.GetValue(entity)}'"));
 		}
 	}
 

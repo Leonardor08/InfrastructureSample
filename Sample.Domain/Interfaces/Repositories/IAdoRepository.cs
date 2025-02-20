@@ -9,4 +9,5 @@ public interface IAdoRepository<T> where T : Entity
     Task<T> FindByIdAsync(string Property, Guid id);
     Task UpdateAsync(T entity, string property, Guid id);
     Task DeleteAsync(string property, Guid id);
+    Task<List<T>> ReadPackage(string package, Dictionary<string, object>? values = null);
 }

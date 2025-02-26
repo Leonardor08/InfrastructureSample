@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="23.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources\MessagesResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

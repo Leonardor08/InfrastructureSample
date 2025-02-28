@@ -11,19 +11,9 @@ namespace Sample.Application.Queries.Handlers
 
         public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-			var inputParams = new Dictionary<string, object>
-            {
-	            { "p_user_id", request.Id.ToString() }
-            };
+			List<UserInfo> activeUsers = await _repository.ExecuteViewAsync<UserInfo>("ACTIVE_USERS");
 
-			var outputParams = new Dictionary<string, OracleDbType>
-            {
-	            { "p_email", OracleDbType.Varchar2 }
-            };
-			List<UserInfo> users = await _repository.ExecuteStoredProcedureWithCursorAsync<UserInfo>("GET_USERS_INFO");
-			//await _repository.ReadPackage("GET_USER_EMAIL",inputParams, outputParams);
-			//await _repository.DeleteAsync("id", request.Id);
-            return new() { Data = {}, Message = "", Success = true };
+			return new() { Data = {}, Message = "", Success = true };
         }
     }
 	public class UserInfo 

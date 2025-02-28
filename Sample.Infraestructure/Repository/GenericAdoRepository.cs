@@ -141,10 +141,9 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 			_context.Dispose();
 		}
 	}
-	public async Task<List<T>> ReadPackage(string package, Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
+	public async Task<Dictionary<string, object>> ReadPackage(string package, Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
 	{
-		List<T> list = [];
-		Dictionary<string, object> outputResults = new();
+		Dictionary<string, object> outputResults = [];
 
 		try
 		{
@@ -193,7 +192,7 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 			_context.Dispose();
 		}
 
-		return list;
+		return outputResults;
 	}
 	public async Task<List<T>> ExecuteStoredProcedureWithCursorAsync<T>(
 	string procedureName) where T : new()
@@ -239,7 +238,70 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 		}
 		return resultSet;
 	}
+	public async Task<T> ExecuteFunctionAsync<T>(string functionName, Dictionary<string, object> parameters)
+	{
+		try
+		{
+			_context.BeginTransaction();
+			using OracleCommand command = _context.CreateCommand(functionName);
+			command.CommandType = CommandType.Text; 
+			string paramList = string.Join(", ", parameters.Keys.Select(k => ":" + k));
+			command.CommandText = $"SELECT {functionName}({paramList}) FROM DUAL";
 
+			foreach (var param in parameters)
+			{
+				command.Parameters.Add(new OracleParameter(param.Key, param.Value));
+			}
+
+			object result = await command.ExecuteScalarAsync();
+			return result == DBNull.Value ? default : (T)Convert.ChangeType(result, typeof(T));
+		}
+		catch (Exception)
+		{
+			_context.Rollback();
+			throw;
+		}
+		finally
+		{
+			_context.Dispose();
+		}
+	}
+	public async Task<List<T>> ExecuteViewAsync<T>(string viewName) where T : new()
+	{
+		List<T> resultSet = [];
+		try
+		{
+			_context.BeginTransaction();
+			using OracleCommand command = _context.CreateCommand($"SELECT * FROM {viewName}");
+			command.CommandType = CommandType.Text;
+
+			using OracleDataReader reader = await command.ExecuteReaderAsync();
+
+			while (await reader.ReadAsync())
+			{
+				T entity = new();
+
+				foreach (var prop in typeof(T).GetProperties())
+				{
+					object value = reader[prop.Name] == DBNull.Value ? null : reader[prop.Name];
+					prop.SetValue(entity, value);
+				}
+
+				resultSet.Add(entity);
+			}
+		}
+		catch (Exception)
+		{
+			_context.Rollback();
+			throw;
+		}
+		finally
+		{
+			_context.Dispose();
+		}
+
+		return resultSet;
+	}
 
 	private static string GetParameters(T entity)
 	{

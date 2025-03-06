@@ -5,9 +5,9 @@ namespace Sample.Application.Commands
 {
     public class CreateUserCommand : IRequest<Response<Users>>
     {
-        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty.ToString();
+        public int Status_Id { get; set; }
     }
 }

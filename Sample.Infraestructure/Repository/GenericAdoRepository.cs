@@ -19,27 +19,26 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 			_context.BeginTransaction();
 
 			entity.CreatedDate = DateTime.Now;
+			entity.Id = Guid.NewGuid();
+			// Construir la consulta con parámetros
+			string columnNames = string.Join(", ", typeof(T).GetProperties().Select(p => p.Name));
+			string paramNames = GetParameters(entity);
 
-			string insertQuery = $"INSERT INTO {_tableName} VALUES ({GetParameters(entity)})";
+			string insertQuery = $"INSERT INTO {_tableName} ({columnNames}) VALUES ({paramNames})";
 
 			using OracleCommand command = _context.CreateCommand(insertQuery);
 
 			await command.ExecuteNonQueryAsync();
 
 			_context.Commit();
-
-			_context.Dispose();
 		}
 		catch (Exception)
 		{
 			_context.Rollback();
 			throw;
 		}
-		finally
-		{
-			_context.Dispose();
-		}
 	}
+
 	public async Task<List<T>> ReadAllAsync()
 	{
 		List<T> list = [];
@@ -141,7 +140,7 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 			_context.Dispose();
 		}
 	}
-	public async Task<Dictionary<string, object>> ReadPackage(string package, Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
+	public async Task<Dictionary<string, object>> ExcecuteProcedureOutputParams(string package, Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
 	{
 		Dictionary<string, object> outputResults = [];
 
@@ -253,7 +252,7 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 				command.Parameters.Add(new OracleParameter(param.Key, param.Value));
 			}
 
-			object result = await command.ExecuteScalarAsync();
+			object? result = await command.ExecuteScalarAsync();
 			return result == DBNull.Value ? default : (T)Convert.ChangeType(result, typeof(T));
 		}
 		catch (Exception)
@@ -302,7 +301,6 @@ public class GenericAdoRepository<T>(OracleDataContext context) : IAdoRepository
 
 		return resultSet;
 	}
-
 	private static string GetParameters(T entity)
 	{
 

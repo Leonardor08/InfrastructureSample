@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
 using Sample.Application.Queries;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Sample.Api.Controllers
 {
@@ -42,5 +43,34 @@ namespace Sample.Api.Controllers
             var response = await _mediator.Send(getUserById);
             return Ok(response);
         }
-    }
+
+        [HttpGet("GetActiveUsers")]
+		public async Task<IActionResult> GetActiveUsers()
+		{
+			var response = await _mediator.Send(new GetActiveUsersQuery());
+			return Ok(response);
+		}
+
+		[HttpGet("GetUsersInfo")]
+		public async Task<IActionResult> GetUsersInfo()
+		{
+			var response = await _mediator.Send(new GetUserInfoQuery());
+			return Ok(response);
+		}
+
+		[HttpGet("GetUserEmail")]
+		public async Task<IActionResult> GetUserEmailById([FromQuery] string id)
+		{
+			GetEmailByIdQuery query = new() { Id = id };
+			var response = await _mediator.Send(query);
+			return Ok(response);
+		}
+
+		[HttpGet("GetUsersCount")]
+		public async Task<IActionResult> GetUsersCount()
+		{
+			var response = await _mediator.Send(new GetUsersCountQuery());
+			return Ok(response);
+		}
+	}
 }

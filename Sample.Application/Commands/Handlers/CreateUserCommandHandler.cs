@@ -15,7 +15,7 @@ namespace Sample.Application.Commands.Handlers
 		{
 
 			//await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
-			Users user = new() { Id = command.Id, Name = command.Name, Phone = command.Number, Email = command.Email };
+			Users user = new() { Name = command.Name, Phone = command.Number, Email = command.Email, Status_Id = 1 };
 			await _repository.CreateAsync(user);
 			Response<Users> response = new() { Success = true, Message = "Error",Data = user };
 			return response;

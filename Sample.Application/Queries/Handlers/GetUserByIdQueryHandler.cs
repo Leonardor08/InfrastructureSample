@@ -11,16 +11,10 @@ namespace Sample.Application.Queries.Handlers
 
         public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-			List<UserInfo> activeUsers = await _repository.ExecuteViewAsync<UserInfo>("ACTIVE_USERS");
-
-			return new() { Data = {}, Message = "", Success = true };
+            Users user = await _repository.FindByIdAsync("Id",request.Id);
+			return new() { Data = user, Message = "", Success = true };
         }
     }
-	public class UserInfo 
-	{
-		public string Name { get; set; }
-		public string Email { get; set; }
-		public string Phone { get; set; }
-	}
+	
 
 }

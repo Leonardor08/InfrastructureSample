@@ -14,6 +14,4 @@ public interface IAdoRepository<T> where T : Entity
 	Task<List<T>> ExecuteStoredProcedureWithCursorAsync<T>(string procedureName) where T : new();
 	Task<T> ExecuteFunctionAsync<T>(string functionName, Dictionary<string, object> parameters);
 	Task<List<T>> ExecuteViewAsync<T>(string viewName) where T : new();
-
-
 }

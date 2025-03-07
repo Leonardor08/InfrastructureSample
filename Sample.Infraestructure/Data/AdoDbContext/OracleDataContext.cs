@@ -1,8 +1,9 @@
 ﻿using Oracle.ManagedDataAccess.Client;
+using Sample.Domain.Interfaces;
 
 namespace Sample.Infraestructure.Data.AdoDbContext
 {
-    public class OracleDataContext(OracleConnection connection, OracleTransaction transaction) : IDisposable
+    public class OracleDataContext(OracleConnection connection, OracleTransaction transaction) : ITransactionScope
     {
         private readonly OracleConnection _connection = connection;
         private OracleTransaction? _transaction = transaction;

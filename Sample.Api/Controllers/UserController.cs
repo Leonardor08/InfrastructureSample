@@ -12,15 +12,15 @@ namespace Sample.Api.Controllers
     {
 		private readonly IMediator _mediator = mediator;
 
-        [HttpPost]
-        [Route("Create")]
-        public async Task<IActionResult> CreateUser(CreateUserCommand command)
+		[HttpPost]
+		[Route("Create")]
+		public async Task<IActionResult> CreateUser(CreateUserCommand command)
 		{
 			var response = await _mediator.Send(command);
 			return Ok(response);
 		}
 
-        [HttpPost]
+		[HttpPost]
         [Route("Edit")]
         public async Task<IActionResult> EditUser(EditUserCommand command)
         {

@@ -1,10 +1,13 @@
-﻿using Sample.Api.Configuration.CQRS.Commands;
+﻿using MediatR;
+using Microsoft.OpenApi.Models;
+using Sample.Api.Configuration.CQRS.Commands;
 using Sample.Api.Configuration.GenericInjections;
 using Sample.Api.Configuration.ORM;
+using Sample.Application.Commands;
 
 namespace Sample.Api.Configuration
 {
-	public static class Injections
+    public static class Injections
 	{
 		public static void Inject(this WebApplicationBuilder webApplicationBuilder)
 		{
@@ -14,7 +17,10 @@ namespace Sample.Api.Configuration
 			webApplicationBuilder.Services.AddUsersDependency();
 			webApplicationBuilder.Services.AddControllers();
 			webApplicationBuilder.Services.AddEndpointsApiExplorer();
-			webApplicationBuilder.Services.AddSwaggerGen();
+			webApplicationBuilder.Services.AddSwaggerGen(options =>
+			{
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "V1" });
+			});
 		}
 	}
 }

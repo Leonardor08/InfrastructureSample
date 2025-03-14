@@ -1,7 +1,8 @@
 ﻿using Sample.Application.Commands;
-using Sample.Application.Queries;
 using Sample.Application.Interfaces.Validations;
+using Sample.Application.Queries;
 using Sample.Infraestructure.Validations;
+using System.Reflection;
 
 namespace Sample.Api.Configuration.CQRS.Commands
 {
@@ -10,6 +11,7 @@ namespace Sample.Api.Configuration.CQRS.Commands
         public static IServiceCollection AddUsersDependency(this IServiceCollection services)
         {
             services.AddTransient<ICreateUserValidations, CreateUserValidations>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserCommand>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EditUserCommand>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetActiveUsersQuery>());

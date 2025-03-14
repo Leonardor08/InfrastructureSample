@@ -1,5 +1,5 @@
 ﻿using Oracle.ManagedDataAccess.Client;
-using Sample.Domain.Interfaces;
+using Sample.Application.Interfaces;
 
 namespace Sample.Infraestructure.Data.AdoDbContext
 {

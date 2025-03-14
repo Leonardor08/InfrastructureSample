@@ -22,7 +22,13 @@ namespace Sample.Api.Configuration.ORM
 				var connection = new OracleConnection(configuration.GetConnectionString(DomainConstants.ORACLE_CONNECTION));
 				return new OracleDataContext(connection);
 			});
-      
+
+            services.AddScoped<ITransactionScope>(provider =>
+            {
+                var context = provider.GetRequiredService<OracleDataContext>();
+                return (ITransactionScope)context;
+            });
+
             return services;
 		}
 	}

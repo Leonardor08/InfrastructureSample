@@ -3,11 +3,12 @@ using Oracle.ManagedDataAccess.Client;
 using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.CustomAttributes;
 using Sample.Domain.Models;
+using Sample.Domain.ValueObjects;
+using Sample.Infraestructure._shared;
 using Sample.Infraestructure.Data.AdoDbContext;
 using Sample.Infraestructure.Data.EFDbContext;
-using Sample.Infraestructure._shared;
-using System.Linq.Expressions;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace Sample.Infraestructure.Repository
 {
@@ -33,6 +34,16 @@ namespace Sample.Infraestructure.Repository
             await _dbSet.AddAsync(entity);
             await _efContext.SaveChangesAsync();
         }
+        public async Task CreateAsync(T entity, DatabaseType flag)
+        {
+            entity.CreatedDate = DateTime.Now;
+            entity.UpdateDate = null;
+            string collumns = string.Join(", ", typeof(T).GetProperties().Select(property => property.Name));
+            string parameters = AdoExtension<T, TKey>.GetParameters(entity);
+            string insertQuery = $"INSERT INTO {_tableName} ({collumns}) VALUES ({parameters})";
+            using OracleCommand command = _oracleContext.CreateCommand(insertQuery);
+            await command.ExecuteNonQueryAsync();
+        }
         public async Task DeleteAsync(TKey entity)
         {
             var result = await FindByIdAsync(entity) ?? throw new Exception($"{nameof(T)} Not Found");
@@ -47,56 +58,7 @@ namespace Sample.Infraestructure.Repository
 
             await command.ExecuteNonQueryAsync();
         }
-        public async Task<T> FindByIdAsync(TKey id)
-        {
-            return await _dbSet.FindAsync(id) ?? throw new Exception($"{nameof(T)} Not Found");
-        }
-        public async Task<T> FindByIdAsync(string Property, TKey id)
-        {
-            T? entity = default;
-
-            string selectQuery = $"SELECT * FROM {_tableName} WHERE {Property} = '{id}'";
-            using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
-            using OracleDataReader reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-                entity = AdoExtension<T,TKey>.MapEntity(reader);
-
-            return entity!;
-        }
-        public async Task<T> GetByFilter(Expression<Func<T, bool>> filter)
-        {
-            var entity = await _dbSet.FindAsync(filter) ?? throw new Exception($"{nameof(T)} Not Found");
-            return entity;
-        }
-        public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, 
-            Expression<Func<T, object>> orderBy, bool? isDesc = true)
-        {
-            if (isDesc == false)
-                return _dbSet.Where(predicate).OrderBy(orderBy);
-            else
-                return _dbSet.Where(predicate).OrderByDescending(orderBy);
-        }
-        public async Task<List<T>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync() ?? throw new Exception($"{nameof(T)} List Not Found");
-        }
-        public async Task UpdateAsync(T entity)
-        {
-            entity.UpdateDate = DateTime.Now;
-            _dbSet.Update(entity);
-            await _efContext.SaveChangesAsync();
-        }
-        public async Task UpdateAsync(T entity, string pKProperty, TKey id)
-        {
-            entity.UpdateDate = DateTime.Now;
-
-            string updateQuery = $"UPDATE {_tableName} SET {AdoExtension<T, TKey>.MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
-
-            using OracleCommand command = _oracleContext.CreateCommand(updateQuery);
-
-            await command.ExecuteNonQueryAsync();
-        }
-        public async Task<Dictionary<string, object>> ExcecuteProcedureOutputParams(string package, 
+        public async Task<Dictionary<string, object>> ExcecuteProcedureOutputParams(string package,
             Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
         {
             Dictionary<string, object> outputResults = [];
@@ -197,6 +159,67 @@ namespace Sample.Infraestructure.Repository
             }
 
             return resultSet;
+        }
+        public async Task<T> FindByIdAsync(TKey id)
+        {
+            return await _dbSet.FindAsync(id) ?? throw new Exception($"{nameof(T)} Not Found");
+        }
+        public async Task<T> FindByIdAsync(string Property, TKey id)
+        {
+            T? entity = default;
+
+            string selectQuery = $"SELECT * FROM {_tableName} WHERE {Property} = '{id}'";
+            using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
+            using OracleDataReader reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+                entity = AdoExtension<T,TKey>.MapEntity(reader);
+
+            return entity!;
+        }
+        public async Task<T> GetByFilter(Expression<Func<T, bool>> filter)
+        {
+            var entity = await _dbSet.FindAsync(filter) ?? throw new Exception($"{nameof(T)} Not Found");
+            return entity;
+        }
+        public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, 
+            Expression<Func<T, object>> orderBy, bool? isDesc = true)
+        {
+            if (isDesc == false)
+                return _dbSet.Where(predicate).OrderBy(orderBy);
+            else
+                return _dbSet.Where(predicate).OrderByDescending(orderBy);
+        }
+        public async Task<List<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync() ?? throw new Exception($"{nameof(T)} List Not Found");
+        }
+        public async Task<List<T>> GetAllAsync(DatabaseType flag)
+        {
+            List<T> values = [];
+
+            string selectQuery = $"SELECT * FROM {_tableName}";
+
+            using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
+            using OracleDataReader reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
+                values.Add(AdoExtension<T, TKey>.MapEntity(reader));
+            return values;
+        }
+        public async Task UpdateAsync(T entity)
+        {
+            entity.UpdateDate = DateTime.Now;
+            _dbSet.Update(entity);
+            await _efContext.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(T entity, string pKProperty, TKey id)
+        {
+            entity.UpdateDate = DateTime.Now;
+
+            string updateQuery = $"UPDATE {_tableName} SET {AdoExtension<T, TKey>.MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
+
+            using OracleCommand command = _oracleContext.CreateCommand(updateQuery);
+
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

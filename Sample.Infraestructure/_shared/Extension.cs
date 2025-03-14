@@ -1,10 +1,11 @@
 ﻿using Oracle.ManagedDataAccess.Client;
+using Sample.Domain.CustomAttributes;
 using Sample.Domain.Models;
 using System.Reflection;
 
 namespace Sample.Infraestructure._shared
 {
-    public class AdoExtension<T, TKey> where T : class, IEntity<TKey>
+    public class Extension<T, TKey> where T : class, IEntity<TKey>
     {
         public static string GetParameters(T entity)
         {

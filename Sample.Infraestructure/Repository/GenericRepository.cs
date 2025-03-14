@@ -9,24 +9,35 @@ using Sample.Infraestructure.Data.AdoDbContext;
 using Sample.Infraestructure.Data.EFDbContext;
 using System.Data;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Sample.Infraestructure.Repository
 {
     public class GenericRepository<T, TKey> : IRepository<T,TKey> 
-        where T : class, IEntity<TKey> where TKey : notnull
+        where T : class, IEntity<TKey>, new() 
+        where TKey : notnull
     {
         private readonly AppDbContext _efContext;
         private readonly DbSet<T> _dbSet;
         private readonly OracleDataContext _oracleContext;
-        private readonly string _tableName = Attribute.GetCustomAttribute(typeof(T), typeof(EntityName))!.ToString()!;
+        private readonly string _tableName = CreateInstace<T>();
 
+        public static string CreateInstace<T>() where T : new()
+        {
+            T instace = new();
+
+            Type type = instace.GetType();
+
+            var attribute = type.GetCustomAttributes<EntityName>();
+
+            return attribute.Select(value => value.Name).First();
+        }
         public GenericRepository(AppDbContext efContext, OracleDataContext oracleContext)
         {
             _efContext = efContext;
             _oracleContext = oracleContext;
             _dbSet = _efContext.Set<T>();
         }
-
         public async Task CreateAsync(T entity)
         {
             entity.CreatedDate = DateTime.Now;
@@ -39,7 +50,7 @@ namespace Sample.Infraestructure.Repository
             entity.CreatedDate = DateTime.Now;
             entity.UpdateDate = null;
             string collumns = string.Join(", ", typeof(T).GetProperties().Select(property => property.Name));
-            string parameters = AdoExtension<T, TKey>.GetParameters(entity);
+            string parameters = Extension<T, TKey>.GetParameters(entity);
             string insertQuery = $"INSERT INTO {_tableName} ({collumns}) VALUES ({parameters})";
             using OracleCommand command = _oracleContext.CreateCommand(insertQuery);
             await command.ExecuteNonQueryAsync();
@@ -172,7 +183,7 @@ namespace Sample.Infraestructure.Repository
             using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
             using OracleDataReader reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
-                entity = AdoExtension<T,TKey>.MapEntity(reader);
+                entity = Extension<T,TKey>.MapEntity(reader);
 
             return entity!;
         }
@@ -202,7 +213,7 @@ namespace Sample.Infraestructure.Repository
             using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
             using OracleDataReader reader = await command.ExecuteReaderAsync();
             while (reader.Read())
-                values.Add(AdoExtension<T, TKey>.MapEntity(reader));
+                values.Add(Extension<T, TKey>.MapEntity(reader));
             return values;
         }
         public async Task UpdateAsync(T entity)
@@ -215,7 +226,7 @@ namespace Sample.Infraestructure.Repository
         {
             entity.UpdateDate = DateTime.Now;
 
-            string updateQuery = $"UPDATE {_tableName} SET {AdoExtension<T, TKey>.MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
+            string updateQuery = $"UPDATE {_tableName} SET {Extension<T, TKey>.MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
 
             using OracleCommand command = _oracleContext.CreateCommand(updateQuery);
 

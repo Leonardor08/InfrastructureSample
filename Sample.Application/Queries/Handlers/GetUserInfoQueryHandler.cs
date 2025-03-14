@@ -1,17 +1,16 @@
 ﻿using MediatR;
-using Sample.Domain.Interfaces.Repositories;
+using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.Models;
-using Sample.Domain.ViewModels;
+using Sample.Application.ViewModels;
 
-namespace Sample.Application.Queries.Handlers
+namespace Sample.Application.Queries.Handlers;
+
+public class GetUserInfoQueryHandler(IRepository<Users, Guid> repository) : IRequestHandler<GetUserInfoQuery, Response<List<UserInfoViewModel>>>
 {
-	public class GetUserInfoQueryHandler(IAdoRepository<Users> repository) : IRequestHandler<GetUserInfoQuery, Response<List<UserInfoViewModel>>>
+	private readonly IRepository<Users, Guid> _repository = repository;
+	public async Task<Response<List<UserInfoViewModel>>> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
 	{
-		private readonly IAdoRepository<Users> _repository = repository;
-		public async Task<Response<List<UserInfoViewModel>>> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
-		{
-			List<UserInfoViewModel> usersInfo = await _repository.ExecuteStoredProcedureWithCursorAsync<UserInfoViewModel>("GET_USERS_INFO");
-			return new() { Data = usersInfo };
-		}
+		List<UserInfoViewModel> usersInfo = await _repository.ExecuteStoredProcedureWithCursorAsync<UserInfoViewModel>("GET_USERS_INFO");
+		return new() { Data = usersInfo };
 	}
 }

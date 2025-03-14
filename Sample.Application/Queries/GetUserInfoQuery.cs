@@ -1,10 +1,7 @@
 ﻿using MediatR;
+using Sample.Application.ViewModels;
 using Sample.Domain.Models;
-using Sample.Domain.ViewModels;
 
-namespace Sample.Application.Queries
-{
-    public class GetUserInfoQuery : IRequest<Response<List<UserInfoViewModel>>>
-	{
-	}
-}
+namespace Sample.Application.Queries;
+
+public class GetUserInfoQuery : IRequest<Response<List<UserInfoViewModel>>> { }

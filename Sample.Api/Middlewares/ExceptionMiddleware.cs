@@ -1,5 +1,5 @@
 ﻿using Sample.Application.Services;
-using Sample.Domain.Interfaces.Repositories;
+using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Domain.Resources.Constants;
 using System.Net;
@@ -14,7 +14,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
 	private readonly ILogger<ExceptionMiddleware> _logger = logger;
 
 
-	public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog> repository)
+	public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog, Guid> repository)
     {
 		context.Request.EnableBuffering();
 		try
@@ -27,7 +27,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env, IRepository<ErrorLog> repository)
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env, IRepository<ErrorLog, Guid> repository)
     {
         ExceptionErrorPersistence serviceLogPersistance = new(repository);
         context.Response.ContentType = MiddlewareConstants.JSON;

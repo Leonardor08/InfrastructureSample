@@ -1,6 +1,6 @@
 ﻿using Sample.Domain.Models;
 
-namespace Sample.Domain.Interfaces.Auth
+namespace Sample.Application.Interfaces.Auth
 {
 	public interface IAuthStrategy
 	{

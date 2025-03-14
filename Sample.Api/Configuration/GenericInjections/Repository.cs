@@ -1,5 +1,5 @@
-﻿using Sample.Domain.Interfaces;
-using Sample.Domain.Interfaces.Repositories;
+﻿using Sample.Application.Interfaces.Repositories;
+using Sample.Domain.Interfaces;
 using Sample.Infraestructure.Data.AdoDbContext;
 using Sample.Infraestructure.Repository;
 
@@ -9,9 +9,12 @@ public static class Repository
 {
     public static IServiceCollection AddRepositoryDependency(this IServiceCollection services)
     {
-        services.AddScoped(typeof(ITransactionScope), typeof(OracleDataContext));
-        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-		services.AddScoped(typeof(IAdoRepository<>), typeof(GenericAdoRepository<>));
-		return services;
+        services.AddScoped(typeof(IRepository<,>), typeof(GenericRepository<,>));
+        services.AddScoped<ITransactionScope>(provider =>
+        {
+            var context = provider.GetRequiredService<OracleDataContext>();
+            return (ITransactionScope)context;
+        });
+        return services;
     }
 }

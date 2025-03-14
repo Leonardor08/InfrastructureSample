@@ -3,10 +3,13 @@ using Sample.Domain.Interfaces;
 
 namespace Sample.Infraestructure.Data.AdoDbContext
 {
-    public class OracleDataContext(OracleConnection connection) : ITransactionScope
+    public class OracleDataContext : ITransactionScope
     {
-        private readonly OracleConnection _connection = connection;
+        private readonly OracleConnection _connection;
         private OracleTransaction? _transaction;
+
+        public OracleDataContext(OracleConnection connection) 
+            => _connection = connection;
 
 		public OracleCommand CreateCommand(string sqlQuery)
 		{

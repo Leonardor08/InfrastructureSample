@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 using Sample.Domain.Models;
 
-namespace Sample.Infraestructure.Extensions
+namespace Sample.Application.Extensions
 {
 	internal static class ValidExtension
 	{

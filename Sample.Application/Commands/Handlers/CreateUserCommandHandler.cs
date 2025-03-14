@@ -1,15 +1,15 @@
-﻿using Sample.Domain.Interfaces.Validations;
+﻿using MediatR;
+using Sample.Application.Interfaces;
+using Sample.Application.Interfaces.Repositories;
+using Sample.Application.Interfaces.Validations;
 using Sample.Domain.Models;
-using MediatR;
-using Sample.Domain.Interfaces.Repositories;
-using Sample.Domain.Interfaces;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class CreateUserCommandHandler(IAdoRepository<Users> repository, ICreateUserValidations createUserValidations,
+    public class CreateUserCommandHandler(IRepository<Users, Guid> repository, ICreateUserValidations createUserValidations,
         ITransactionScope transactionScope) : IRequestHandler<CreateUserCommand, Response<Users>>
     {
-        private readonly IAdoRepository<Users> _repository = repository;
+        private readonly IRepository<Users, Guid> _repository = repository;
         private readonly ICreateUserValidations _createUserValidations = createUserValidations;   
 		private readonly ITransactionScope _transactionScope = transactionScope;
 
@@ -19,7 +19,7 @@ namespace Sample.Application.Commands.Handlers
 			try
 			{
 				_transactionScope.BeginTransaction();
-                //await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
+                await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
                 await _repository.CreateAsync(user);
 				_transactionScope.Commit();
             }

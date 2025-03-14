@@ -1,20 +1,17 @@
 ﻿using MediatR;
-using Oracle.ManagedDataAccess.Client;
-using Sample.Domain.Interfaces.Repositories;
+using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.Models;
 
-namespace Sample.Application.Queries.Handlers
+namespace Sample.Application.Queries.Handlers;
+
+public class GetUserByIdQueryHandler(IRepository<Users, Guid> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
 {
-    public class GetUserByIdQueryHandler(IAdoRepository<Users> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
+    private readonly IRepository<Users, Guid> _repository = repository;
+
+    public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        private readonly IAdoRepository<Users> _repository = repository;
-
-        public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
-        {
-            Users user = await _repository.FindByIdAsync("Id",request.Id);
+        Users user = await _repository.FindByIdAsync("Id", request.Id);
 			return new() { Data = user, Message = "", Success = true };
-        }
     }
-	
-
 }
+	

@@ -1,4 +1,4 @@
-﻿namespace Sample.Domain.Interfaces.Validations
+﻿namespace Sample.Application.Interfaces.Validations
 {
     public interface ICreateUserValidations
     {

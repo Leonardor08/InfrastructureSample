@@ -1,4 +1,4 @@
-﻿namespace Sample.Domain.ViewModels
+﻿namespace Sample.Application.ViewModels
 {
     public class UsersActiveViewModel
     {

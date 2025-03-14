@@ -1,69 +1,202 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sample.Domain.Interfaces.Repositories;
+using Oracle.ManagedDataAccess.Client;
+using Sample.Application.Interfaces.Repositories;
+using Sample.Domain.CustomAttributes;
 using Sample.Domain.Models;
+using Sample.Infraestructure.Data.AdoDbContext;
 using Sample.Infraestructure.Data.EFDbContext;
+using Sample.Infraestructure._shared;
 using System.Linq.Expressions;
+using System.Data;
 
 namespace Sample.Infraestructure.Repository
 {
-    public class GenericRepository<T> : IRepository<T> where T : Entity
+    public class GenericRepository<T, TKey> : IRepository<T,TKey> 
+        where T : class, IEntity<TKey> where TKey : notnull
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly AppDbContext _efContext;
         private readonly DbSet<T> _dbSet;
+        private readonly OracleDataContext _oracleContext;
+        private readonly string _tableName = Attribute.GetCustomAttribute(typeof(T), typeof(EntityName))!.ToString()!;
 
-        public GenericRepository(AppDbContext appDbContext)
+        public GenericRepository(AppDbContext efContext, OracleDataContext oracleContext)
         {
-            _appDbContext = appDbContext;
-            _dbSet = _appDbContext.Set<T>();
+            _efContext = efContext;
+            _oracleContext = oracleContext;
+            _dbSet = _efContext.Set<T>();
         }
 
-        public async Task<T> CreateAsync(T entity)
+        public async Task CreateAsync(T entity)
         {
-            entity.Id = Guid.NewGuid();
             entity.CreatedDate = DateTime.Now;
             entity.UpdateDate = null;
             await _dbSet.AddAsync(entity);
-            await _appDbContext.SaveChangesAsync();
-            return entity;
+            await _efContext.SaveChangesAsync();
         }
-
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(TKey entity)
         {
-            var result = await FindByIdAsync(entity.Id) ?? throw new Exception($"{nameof(T)} Not Found");
+            var result = await FindByIdAsync(entity) ?? throw new Exception($"{nameof(T)} Not Found");
             _dbSet.Remove(result);
-            await _appDbContext.SaveChangesAsync();
+            await _efContext.SaveChangesAsync();
         }
+        public async Task DeleteAsync(string property, TKey id)
+        {
+            string deleteQuery = $"DELETE FROM {_tableName} WHERE {property} = '{id}'";
 
-        public async Task<T> FindByIdAsync(Guid id)
+            using OracleCommand command = _oracleContext.CreateCommand(deleteQuery);
+
+            await command.ExecuteNonQueryAsync();
+        }
+        public async Task<T> FindByIdAsync(TKey id)
         {
             return await _dbSet.FindAsync(id) ?? throw new Exception($"{nameof(T)} Not Found");
         }
+        public async Task<T> FindByIdAsync(string Property, TKey id)
+        {
+            T? entity = default;
 
+            string selectQuery = $"SELECT * FROM {_tableName} WHERE {Property} = '{id}'";
+            using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
+            using OracleDataReader reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+                entity = AdoExtension<T,TKey>.MapEntity(reader);
+
+            return entity!;
+        }
         public async Task<T> GetByFilter(Expression<Func<T, bool>> filter)
         {
             var entity = await _dbSet.FindAsync(filter) ?? throw new Exception($"{nameof(T)} Not Found");
             return entity;
         }
-
-        public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy, bool? isDesc = true)
+        public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, 
+            Expression<Func<T, object>> orderBy, bool? isDesc = true)
         {
             if (isDesc == false)
                 return _dbSet.Where(predicate).OrderBy(orderBy);
             else
                 return _dbSet.Where(predicate).OrderByDescending(orderBy);
         }
-
-        public async Task<List<T>> ReadAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync() ?? throw new Exception($"{nameof(T)} List Not Found");
         }
-
-        public async Task<T> UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
             entity.UpdateDate = DateTime.Now;
             _dbSet.Update(entity);
-            await _appDbContext.SaveChangesAsync();
-            return entity;
+            await _efContext.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(T entity, string pKProperty, TKey id)
+        {
+            entity.UpdateDate = DateTime.Now;
+
+            string updateQuery = $"UPDATE {_tableName} SET {AdoExtension<T, TKey>.MapSetClause(entity)} WHERE {pKProperty} = '{id}'";
+
+            using OracleCommand command = _oracleContext.CreateCommand(updateQuery);
+
+            await command.ExecuteNonQueryAsync();
+        }
+        public async Task<Dictionary<string, object>> ExcecuteProcedureOutputParams(string package, 
+            Dictionary<string, object>? @params = null, Dictionary<string, OracleDbType>? outputParams = null)
+        {
+            Dictionary<string, object> outputResults = [];
+
+            using OracleCommand command = _oracleContext.CreateCommand(package);
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            if (@params != null)
+                foreach (var param in @params)
+                    command.Parameters.Add(param.Key, param.Value);
+
+            if (outputParams != null)
+                foreach (var param in outputParams)
+                {
+                    OracleParameter outputParam = new()
+                    {
+                        ParameterName = param.Key,
+                        OracleDbType = param.Value,
+                        Direction = ParameterDirection.Output,
+                        Size = 255
+                    };
+                    command.Parameters.Add(outputParam);
+                }
+
+            await command.ExecuteReaderAsync();
+
+            if (outputParams != null)
+                foreach (var param in outputParams.Keys)
+                    outputResults[param] = command.Parameters[param].Value;
+
+            return outputResults;
+        }
+        public async Task<List<T>> ExecuteStoredProcedureWithCursorAsync<T>(
+        string procedureName) where T : new()
+        {
+            List<T> resultSet = [];
+            using OracleCommand command = _oracleContext.CreateCommand(procedureName);
+            command.CommandType = CommandType.StoredProcedure;
+
+            OracleParameter cursorParam = new()
+            {
+                ParameterName = "p_cursor",
+                OracleDbType = OracleDbType.RefCursor,
+                Direction = ParameterDirection.Output
+            };
+            command.Parameters.Add(cursorParam);
+
+            using OracleDataReader reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                T entity = new();
+
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    object? value = reader[prop.Name] == DBNull.Value ? null : reader[prop.Name];
+                    prop.SetValue(entity, value);
+                }
+                resultSet.Add(entity);
+            }
+            return resultSet;
+        }
+        public async Task<T> ExecuteFunctionAsync<T>(string functionName, Dictionary<string, object> parameters)
+        {
+            using OracleCommand command = _oracleContext.CreateCommand(functionName);
+            command.CommandType = CommandType.Text;
+            string paramList = string.Join(", ", parameters.Keys.Select(k => ":" + k));
+            command.CommandText = $"SELECT {functionName}({paramList}) FROM DUAL";
+
+            foreach (var param in parameters)
+                command.Parameters.Add(new OracleParameter(param.Key, param.Value));
+
+
+            object? result = await command.ExecuteScalarAsync();
+            return result == DBNull.Value ? default : (T)Convert.ChangeType(result, typeof(T));
+        }
+        public async Task<List<T>> ExecuteViewAsync<T>(string viewName) where T : new()
+        {
+            List<T> resultSet = [];
+
+            using OracleCommand command = _oracleContext.CreateCommand($"SELECT * FROM {viewName}");
+            command.CommandType = CommandType.Text;
+
+            using OracleDataReader reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                T entity = new();
+
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    object value = reader[prop.Name] == DBNull.Value ? null : reader[prop.Name];
+                    prop.SetValue(entity, value);
+                }
+
+                resultSet.Add(entity);
+            }
+
+            return resultSet;
         }
     }
 }

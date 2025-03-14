@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
 using Sample.Application.Queries;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Sample.Api.Controllers
 {

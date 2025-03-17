@@ -18,7 +18,6 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         {
             try
             {
-                _transactionScope.BeginTransaction();
 
                 var response = await next();
 
@@ -38,8 +37,6 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         }
         else
         {
-            _transactionScope.BeginTransaction();
-
             var response = await next();
 
             _transactionScope.Dispose();

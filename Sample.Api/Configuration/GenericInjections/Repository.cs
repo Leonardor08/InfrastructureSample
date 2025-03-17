@@ -9,9 +9,9 @@ namespace Sample.Api.Configuration.GenericInjections;
 
 public static class Repository
 {
-    public static IServiceCollection AddRepositoryDependency(this IServiceCollection services)
+	public static IServiceCollection AddRepositoryDependency(this IServiceCollection services)
     {
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddScoped(typeof(IRepository<,>), typeof(GenericRepository<,>));
         services.AddScoped(typeof(ITransactionScope), typeof(OracleDataContext));
 

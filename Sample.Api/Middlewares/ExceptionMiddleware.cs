@@ -14,7 +14,7 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
 	private readonly ILogger<ExceptionMiddleware> _logger = logger;
 
 
-	public async Task InvokeAsync(HttpContext context, IRepository<ErrorLog, Guid> repository)
+	public async Task InvokeAsync(HttpContext context)
     {
 		context.Request.EnableBuffering();
 		try
@@ -23,13 +23,12 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
         }
         catch (Exception ex)
         {
-			await HandleExceptionAsync(context, ex, _env, repository);
+			await HandleExceptionAsync(context, ex, _env);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env, IRepository<ErrorLog, Guid> repository)
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex, IHostEnvironment env)
     {
-        ExceptionErrorPersistence serviceLogPersistance = new(repository);
         context.Response.ContentType = MiddlewareConstants.JSON;
         int statusCode = (int)HttpStatusCode.InternalServerError;
         string result = string.Empty;
@@ -39,27 +38,22 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
             case ValidatorException validatorException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.VALIDATION_ERROR, Errors = validatorException.Errors });
 				context.Response.StatusCode = statusCode;
-                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
 			case InvalidOperationException invalidOperationException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = invalidOperationException.Message, Errors = [new() { Code= MiddlewareConstants.INVALID_CODE_ERROR , Message = invalidOperationException.Message }] });
                 context.Response.StatusCode = statusCode;
-                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case UnauthorizedAccessException unauthorizedAccessException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = unauthorizedAccessException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = unauthorizedAccessException.Message }] });
 				context.Response.StatusCode = statusCode;
-                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case FormatException formatException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = formatException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = formatException.Message }] });
                 context.Response.StatusCode = statusCode;
-                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case TimeoutException timeOutException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = timeOutException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = timeOutException.Message }] });
                 context.Response.StatusCode = statusCode;
-                await SavingExceptions(context, ex, serviceLogPersistance);
                 break;
             case IOException IOException:
 				result = JsonSerializer.Serialize(new Response { Success = false, Message = IOException.Message, Errors = [new() { Code = MiddlewareConstants.INVALID_CODE_ERROR, Message = IOException.Message }] });
@@ -70,13 +64,11 @@ public class ExceptionMiddleware(RequestDelegate next, IHostEnvironment env, ILo
         {
 			result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.INTERNAL_ERROR, Errors = [new(){ Code = statusCode.ToString(), Message = MiddlewareConstants.INTERNAL_ERROR }] });
             context.Response.StatusCode = statusCode;
-            await SavingExceptions(context, ex, serviceLogPersistance);
         }
         else if(string.IsNullOrEmpty(result) && env.IsProduction())
         {
 			result = JsonSerializer.Serialize(new Response { Success = false, Message = MiddlewareConstants.INTERNAL_ERROR, Errors = [new() { Code = statusCode.ToString(), Message = MiddlewareConstants.INTERNAL_ERROR }] });
 			context.Response.StatusCode = statusCode;
-            await SavingExceptions(context, ex, serviceLogPersistance);
         }
 
         await context.Response.WriteAsync(result);

@@ -37,6 +37,7 @@ namespace Sample.Infraestructure.Repository
             _efContext = efContext;
             _oracleContext = oracleContext;
             _dbSet = _efContext.Set<T>();
+            _oracleContext.BeginTransaction();
         }
         public async Task CreateAsync(T entity)
         {
@@ -209,7 +210,6 @@ namespace Sample.Infraestructure.Repository
             List<T> values = [];
 
             string selectQuery = $"SELECT * FROM {_tableName}";
-
             using OracleCommand command = _oracleContext.CreateCommand(selectQuery);
             using OracleDataReader reader = await command.ExecuteReaderAsync();
             while (reader.Read())

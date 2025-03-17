@@ -4,9 +4,9 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers;
 
-public class GetUserByIdQueryHandler(IRepository<Users, Guid> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
+public class GetUserByIdQueryHandler(IRepository<Users, string> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
 {
-    private readonly IRepository<Users, Guid> _repository = repository;
+    private readonly IRepository<Users, string> _repository = repository;
 
     public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {

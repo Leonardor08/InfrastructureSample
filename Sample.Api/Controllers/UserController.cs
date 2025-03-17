@@ -36,7 +36,7 @@ namespace Sample.Api.Controllers
 		}
 
         [HttpGet("GetById")]
-        public async Task<IActionResult> GetUsersById([FromQuery] Guid query)
+        public async Task<IActionResult> GetUsersById([FromQuery] string query)
         {
             GetUserByIdQuery getUserById = new() { Id = query };
             var response = await _mediator.Send(getUserById);

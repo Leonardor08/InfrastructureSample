@@ -2,6 +2,8 @@
 using Oracle.ManagedDataAccess.Client;
 using Sample.Domain.Resources.Constants;
 using Sample.Infraestructure.Data.AdoDbContext;
+using Sample.Infraestructure.Data.EFDbContext;
+using Sample.Infraestructure.Repository;
 
 namespace Sample.Api.Configuration.ORM
 {
@@ -16,13 +18,13 @@ namespace Sample.Api.Configuration.ORM
                 return new OracleConnection(connection);
             });
 
+
             services.AddScoped<OracleDataContext>(provider =>
 			{
 				var connection = new OracleConnection(configuration.GetConnectionString(DomainConstants.ORACLE_CONNECTION));
 				return new OracleDataContext(connection);
 			});
-
-            return services;
+			return services;
 		}
 	}
 }

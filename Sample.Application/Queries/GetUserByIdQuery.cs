@@ -5,5 +5,5 @@ namespace Sample.Application.Queries;
 
 public class GetUserByIdQuery : IRequest<Response<Users>>
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
 }

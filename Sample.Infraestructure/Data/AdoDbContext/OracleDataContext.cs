@@ -1,5 +1,7 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Microsoft.Extensions.Configuration;
+using Oracle.ManagedDataAccess.Client;
 using Sample.Application.Interfaces;
+using Sample.Domain.Resources.Constants;
 
 namespace Sample.Infraestructure.Data.AdoDbContext
 {
@@ -7,8 +9,7 @@ namespace Sample.Infraestructure.Data.AdoDbContext
     {
         private readonly OracleConnection _connection;
         private OracleTransaction? _transaction;
-
-        public OracleDataContext(OracleConnection connection) 
+		public OracleDataContext(OracleConnection connection) 
             => _connection = connection;
 
 		public OracleCommand CreateCommand(string sqlQuery)
@@ -17,6 +18,10 @@ namespace Sample.Infraestructure.Data.AdoDbContext
 			command.CommandText = sqlQuery;
 			return command;
 		}
+        public bool GetConnection()
+        {
+            return _connection.State == System.Data.ConnectionState.Open;
+        }
 
 		public void BeginTransaction()
         {

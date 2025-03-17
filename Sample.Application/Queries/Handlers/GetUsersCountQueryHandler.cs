@@ -4,9 +4,9 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers;
 
-public class GetUsersCountQueryHandler(IRepository<Users, Guid> repository) : IRequestHandler<GetUsersCountQuery, Response<int>>
+public class GetUsersCountQueryHandler(IRepository<Users, string> repository) : IRequestHandler<GetUsersCountQuery, Response<int>>
 {
-	private readonly IRepository<Users, Guid> _repository = repository;
+	private readonly IRepository<Users, string> _repository = repository;
 	public async Task<Response<int>> Handle(GetUsersCountQuery request, CancellationToken cancellationToken)
 	{
 		int totalUsers = await _repository.ExecuteFunctionAsync<int>("COUNT_USERS", []);

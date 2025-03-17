@@ -4,9 +4,9 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class EditUserCommandHandler(IRepository<Users, Guid> repository) : IRequestHandler<EditUserCommand, Response<Users>>
+    public class EditUserCommandHandler(IRepository<Users, string> repository) : IRequestHandler<EditUserCommand, Response<Users>>
     {
-        private readonly IRepository<Users, Guid> _repository = repository;
+        private readonly IRepository<Users, string> _repository = repository;
         public async Task<Response<Users>> Handle(EditUserCommand request, CancellationToken cancellationToken)
         {
             Users targetUser = await _repository.FindByIdAsync("id", request.Id) ?? new();

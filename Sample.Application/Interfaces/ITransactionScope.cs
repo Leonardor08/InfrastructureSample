@@ -1,4 +1,6 @@
-﻿namespace Sample.Application.Interfaces;
+﻿using Oracle.ManagedDataAccess.Client;
+
+namespace Sample.Application.Interfaces;
 
 public interface ITransactionScope
 {
@@ -6,4 +8,5 @@ public interface ITransactionScope
     void Commit();
     void Rollback();
     void Dispose();
+    bool GetConnection();
 }

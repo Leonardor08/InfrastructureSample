@@ -5,9 +5,9 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers;
 
-public class GetEmailByidQueryHandler(IRepository<Users, Guid> repository) : IRequestHandler<GetEmailByIdQuery, Response<string>>
+public class GetEmailByidQueryHandler(IRepository<Users, string> repository) : IRequestHandler<GetEmailByIdQuery, Response<string>>
 {
-	private readonly IRepository<Users, Guid> _repository = repository;
+	private readonly IRepository<Users, string> _repository = repository;
 	public async Task<Response<string>> Handle(GetEmailByIdQuery request, CancellationToken cancellationToken)
 	{
 		Dictionary<string, object> inputParams = new()

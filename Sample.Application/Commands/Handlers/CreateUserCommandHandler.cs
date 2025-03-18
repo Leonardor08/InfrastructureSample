@@ -17,7 +17,7 @@ namespace Sample.Application.Commands.Handlers
 			Users user = new() { Name = command.Name, Phone = command.Number, Email = command.Email, Status_Id = 1 };
 
 			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
-			user.Id = new Guid().ToString();
+			user.Id = Guid.NewGuid().ToString();
             await _repository.CreateAsync(user, DatabaseType.Oracle);	
 			
 			Response<Users> response = new() { Success = true, Message = "Error",Data = user };

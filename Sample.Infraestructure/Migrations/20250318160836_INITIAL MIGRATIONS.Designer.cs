@@ -12,8 +12,8 @@ using Sample.Infraestructure.Data.EFDbContext;
 namespace Sample.Infraestructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250130201311_number refactor to entities")]
-    partial class numberrefactortoentities
+    [Migration("20250318160836_INITIAL MIGRATIONS")]
+    partial class INITIALMIGRATIONS
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,11 +54,10 @@ namespace Sample.Infraestructure.Migrations
                     b.ToTable("Errors");
                 });
 
-            modelBuilder.Entity("Sample.Domain.Models.User", b =>
+            modelBuilder.Entity("Sample.Domain.Models.Users", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -71,9 +70,12 @@ namespace Sample.Infraestructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Number")
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status_Id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");

@@ -53,9 +53,8 @@ namespace Sample.Infraestructure.Migrations
 
             modelBuilder.Entity("Sample.Domain.Models.Users", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");

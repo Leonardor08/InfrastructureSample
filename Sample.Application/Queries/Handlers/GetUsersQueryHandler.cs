@@ -10,7 +10,7 @@ public class GetUsersQueryHandler(IRepository<Users, string> repository) : IRequ
 		private readonly IRepository<Users, string> _repository = repository;
     public async  Task<Response<List<Users>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
-        var users = await _repository.GetAllAsync(Domain.ValueObjects.DatabaseType.Oracle);
+        var users = await _repository.GetAllAsync();
 		return new() { Data = users, Message = "", Success = true };
     }		
 	}

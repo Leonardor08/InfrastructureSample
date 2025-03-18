@@ -11,20 +11,21 @@ namespace Sample.Api.Configuration.ORM
 	{
 		public static IServiceCollection OracleConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
-
-            services.AddScoped<OracleConnection>(provider =>
-            {
-                var connection = configuration.GetConnectionString(DomainConstants.ORACLE_CONNECTION);
-                return new OracleConnection(connection);
-            });
-
-
-            services.AddScoped<OracleDataContext>(provider =>
+			services.AddScoped<OracleConnection>(provider =>
 			{
 				var connection = new OracleConnection(configuration.GetConnectionString(DomainConstants.ORACLE_CONNECTION));
+				connection.Open(); 
+				return connection;
+			});
+
+			services.AddScoped<OracleDataContext>(provider =>
+			{
+				var connection = provider.GetRequiredService<OracleConnection>(); 
 				return new OracleDataContext(connection);
 			});
+
 			return services;
 		}
+
 	}
 }

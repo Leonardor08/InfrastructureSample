@@ -37,7 +37,6 @@ namespace Sample.Infraestructure.Repository
             _efContext = efContext;
             _oracleContext = oracleContext;
             _dbSet = _efContext.Set<T>();
-            _oracleContext.BeginTransaction();
         }
         public async Task CreateAsync(T entity)
         {

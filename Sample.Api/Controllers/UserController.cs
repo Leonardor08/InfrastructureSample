@@ -5,10 +5,10 @@ using Sample.Application.Queries;
 
 namespace Sample.Api.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserController(IMediator mediator) : ControllerBase
-    {
+	[ApiController]
+	[Route("api/[controller]")]
+	public class UserController(IMediator mediator) : ControllerBase
+	{
 		private readonly IMediator _mediator = mediator;
 
 		[HttpPost]
@@ -20,30 +20,30 @@ namespace Sample.Api.Controllers
 		}
 
 		[HttpPost]
-        [Route("Edit")]
-        public async Task<IActionResult> EditUser(EditUserCommand command)
-        {
-            var response = await _mediator.Send(command);
-            return Ok(response);
-        }
-
-        [HttpGet]
-		[Route("GetAll")]
-		public async Task<IActionResult> GetallUsers()
+		[Route("Edit")]
+		public async Task<IActionResult> EditUser(EditUserCommand command)
 		{
-            var response = await _mediator.Send(new GetUsersQuery());
+			var response = await _mediator.Send(command);
 			return Ok(response);
 		}
 
-        [HttpGet("GetById")]
-        public async Task<IActionResult> GetUsersById([FromQuery] string query)
-        {
-            GetUserByIdQuery getUserById = new() { Id = query };
-            var response = await _mediator.Send(getUserById);
-            return Ok(response);
-        }
+		[HttpGet]
+		[Route("GetAll")]
+		public async Task<IActionResult> GetallUsers()
+		{
+			var response = await _mediator.Send(new GetUsersQuery());
+			return Ok(response);
+		}
 
-        [HttpGet("GetActiveUsers")]
+		[HttpGet("GetById")]
+		public async Task<IActionResult> GetUsersById([FromQuery] string query)
+		{
+			GetUserByIdQuery getUserById = new() { Id = query };
+			var response = await _mediator.Send(getUserById);
+			return Ok(response);
+		}
+
+		[HttpGet("GetActiveUsers")]
 		public async Task<IActionResult> GetActiveUsers()
 		{
 			var response = await _mediator.Send(new GetActiveUsersQuery());
@@ -69,6 +69,12 @@ namespace Sample.Api.Controllers
 		public async Task<IActionResult> GetUsersCount()
 		{
 			var response = await _mediator.Send(new GetUsersCountQuery());
+			return Ok(response);
+		}
+		[HttpDelete("Delete")]
+		public async Task<IActionResult> DeleteUser([FromQuery] DeleteUserCommand command)
+		{
+			var response = await _mediator.Send(command);
 			return Ok(response);
 		}
 	}

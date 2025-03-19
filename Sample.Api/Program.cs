@@ -8,9 +8,21 @@ public class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+		var corsPolicyName = "AllowAngularFrontend";
+		builder.Services.AddCors(options =>
+		{
+			options.AddPolicy(corsPolicyName, policy =>
+			{
+				policy.WithOrigins("http://localhost:4200") 
+					  .AllowAnyHeader()
+					  .AllowAnyMethod()
+					  .AllowCredentials();
+			});
+		});
 
-        //log configuration
-        Log.Logger = new LoggerConfiguration()
+
+		//log configuration
+		Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
@@ -26,7 +38,8 @@ public class Program
 
         builder.Inject();
 
-        var app = builder.Build();
+		builder.Services.AddControllers();
+		var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -35,7 +48,8 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+		app.UseCors(corsPolicyName);
+		app.UseHttpsRedirection();
 
         app.UseAuthorization();
 

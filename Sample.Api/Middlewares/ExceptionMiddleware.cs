@@ -1,5 +1,4 @@
 ﻿using Sample.Application.Services;
-using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.Models;
 using Sample.Domain.Resources.Constants;
 using System.Net;

@@ -1,18 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
 using Sample.Application.Interfaces;
-using Sample.Domain.Resources.Constants;
 
 namespace Sample.Infraestructure.Data.AdoDbContext
 {
-    public class OracleDataContext : ITransactionScope
+    public class OracleDataContext(OracleConnection connection) : ITransactionScope
     {
-        private readonly OracleConnection _connection;
+        private readonly OracleConnection _connection = connection;
         private OracleTransaction? _transaction;
-		public OracleDataContext(OracleConnection connection) 
-            => _connection = connection;
 
-		public OracleCommand CreateCommand(string sqlQuery)
+        public OracleCommand CreateCommand(string sqlQuery)
 		{
 			OracleCommand command = _connection.CreateCommand();
 			command.CommandText = sqlQuery;

@@ -8,5 +8,4 @@ public interface ITransactionScope
     void Commit();
     void Rollback();
     void Dispose();
-    bool GetConnection();
 }

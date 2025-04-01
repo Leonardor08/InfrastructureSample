@@ -11,7 +11,7 @@ namespace Sample.Api.Configuration.CQRS.Commands
         public static IServiceCollection AddUsersDependency(this IServiceCollection services)
         {
             services.AddTransient<ICreateUserValidations, CreateUserValidations>();
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserCommand>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EditUserCommand>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetActiveUsersQuery>());

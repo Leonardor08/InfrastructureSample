@@ -7,17 +7,17 @@ using Sample.Domain.Resources;
 namespace Sample.Infraestructure.Validations;
 
     public class CreateUserValidations : ICreateUserValidations
-{
-	public async Task ValidAsync(string name, string email, string number)
 	{
-		(await new CreateUserValidator().ValidateAsync(new CreateUserModel
+		public async Task ValidAsync(string name, string email, string number)
 		{
-			Name = name,
-			Email = email,
-			Number = number
-		})).Valid();
+			(await new CreateUserValidator().ValidateAsync(new CreateUserModel
+			{
+				Name = name,
+				Email = email,
+				Number = number
+			})).Valid();
+		}
 	}
-}
 public class CreateUserValidator : AbstractValidator<CreateUserModel>
 {
 	public CreateUserValidator()

@@ -2,7 +2,6 @@
 using Sample.Application.Interfaces.Repositories;
 using Sample.Application.Interfaces.Validations;
 using Sample.Domain.Models;
-using Sample.Domain.ValueObjects;
 
 namespace Sample.Application.Commands.Handlers
 {
@@ -18,7 +17,7 @@ namespace Sample.Application.Commands.Handlers
 
 			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
 			user.Id = Guid.NewGuid().ToString();
-            await _repository.CreateAsync(user, DatabaseType.Oracle);	
+            await _repository.CreateAsync(user);	
 			
 			Response<Users> response = new() { Success = true, Message = "Error",Data = user };
 			return response;

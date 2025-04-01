@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Sample.Infraestructure\Sample.Infraestructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configuration\CQRS\QueriesInjection\" />
-  </ItemGroup>
-
 </Project>

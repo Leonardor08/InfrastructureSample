@@ -6,10 +6,10 @@ using Sample.Application.ViewModels;
 
 namespace Sample.Application.Queries.Handlers;
 
-    public class GetActiveusersQueryHandler(IRepository<Users, string> repository, ITransactionScope transactionScope) : 
+    public class GetActiveusersQueryHandler(IAdoRepository<Users, string> repository, ITransactionScope transactionScope) : 
 	IRequestHandler<GetActiveUsersQuery, Response<List<UsersActiveViewModel>>>
 {
-	private readonly IRepository<Users, string> _repository = repository;
+	private readonly IAdoRepository<Users, string> _repository = repository;
 	private readonly ITransactionScope _transactionScope = transactionScope;
 
 	public async Task<Response<List<UsersActiveViewModel>>> Handle(GetActiveUsersQuery request, CancellationToken cancellationToken)

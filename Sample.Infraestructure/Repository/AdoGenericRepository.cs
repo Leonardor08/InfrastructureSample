@@ -1,27 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
 using Sample.Application.Interfaces.Repositories;
 using Sample.Domain.CustomAttributes;
 using Sample.Domain.Models;
 using Sample.Domain.ValueObjects;
 using Sample.Infraestructure._shared;
 using Sample.Infraestructure.Data.AdoDbContext;
-using Sample.Infraestructure.Data.EFDbContext;
 using System.Data;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Sample.Infraestructure.Repository;
 
-public class GenericRepository<T, TKey> : IRepository<T,TKey> 
+public class AdoGenericRepository<T, TKey>(OracleDataContext oracleContext) : IAdoRepository<T,TKey> 
     where T : class, IEntity<TKey>, new() 
     where TKey : notnull
 {
-    private readonly AppDbContext _efContext;
-    private readonly DbSet<T> _dbSet;
-    private readonly OracleDataContext _oracleContext;
+    private readonly OracleDataContext _oracleContext = oracleContext;
     private readonly string _tableName = CreateInstace<T>();
-
     public static string CreateInstace<T>() where T : new()
     {
         T instace = new();
@@ -32,19 +26,6 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
 
         return attribute.Select(value => value.Name).First();
     }
-    public GenericRepository(AppDbContext efContext, OracleDataContext oracleContext)
-    {
-        _efContext = efContext;
-        _oracleContext = oracleContext;
-        _dbSet = _efContext.Set<T>();
-    }
-    public async Task CreateAsync(T entity)
-    {
-        entity.CreatedDate = DateTime.Now;
-        entity.UpdateDate = null;
-        await _dbSet.AddAsync(entity);
-        await _efContext.SaveChangesAsync();
-    }
     public async Task CreateAsync(T entity, DatabaseType flag)
     {
         entity.CreatedDate = DateTime.Now;
@@ -54,12 +35,6 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
         string insertQuery = $"INSERT INTO {_tableName} ({collumns}) VALUES ({parameters})";
         using OracleCommand command = _oracleContext.CreateCommand(insertQuery);
         await command.ExecuteNonQueryAsync();
-    }
-    public async Task DeleteAsync(TKey entity)
-    {
-        var result = await FindByIdAsync(entity) ?? throw new Exception($"{nameof(T)} Not Found");
-        _dbSet.Remove(result);
-        await _efContext.SaveChangesAsync();
     }
     public async Task DeleteAsync(string property, TKey id)
     {
@@ -143,8 +118,8 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
         foreach (var param in parameters)
             command.Parameters.Add(new OracleParameter(param.Key, param.Value));
 
-
         object? result = await command.ExecuteScalarAsync();
+
         return result == DBNull.Value ? default : (T)Convert.ChangeType(result, typeof(T));
     }
     public async Task<List<T>> ExecuteViewAsync<T>(string viewName) where T : new()
@@ -171,10 +146,6 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
 
         return resultSet;
     }
-    public async Task<T> FindByIdAsync(TKey id)
-    {
-        return await _dbSet.FindAsync(id) ?? throw new Exception($"{nameof(T)} Not Found");
-    }
     public async Task<T> FindByIdAsync(string Property, TKey id)
     {
         T? entity = default;
@@ -186,24 +157,7 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
             entity = Extension<T,TKey>.MapEntity(reader);
 
         return entity!;
-    }
-    public async Task<T> GetByFilter(Expression<Func<T, bool>> filter)
-    {
-        var entity = await _dbSet.FindAsync(filter) ?? throw new Exception($"{nameof(T)} Not Found");
-        return entity;
-    }
-    public IEnumerable<T> GetByFilterOrdered(Expression<Func<T, bool>> predicate, 
-        Expression<Func<T, object>> orderBy, bool? isDesc = true)
-    {
-        if (isDesc == false)
-            return _dbSet.Where(predicate).OrderBy(orderBy);
-        else
-            return _dbSet.Where(predicate).OrderByDescending(orderBy);
-    }
-    public async Task<List<T>> GetAllAsync()
-    {
-        return await _dbSet.ToListAsync() ?? throw new Exception($"{nameof(T)} List Not Found");
-    }
+    }    
     public async Task<List<T>> GetAllAsync(DatabaseType flag)
     {
         List<T> values = [];
@@ -214,12 +168,6 @@ public class GenericRepository<T, TKey> : IRepository<T,TKey>
         while (reader.Read())
             values.Add(Extension<T, TKey>.MapEntity(reader));
         return values;
-    }
-    public async Task UpdateAsync(T entity)
-    {
-        entity.UpdateDate = DateTime.Now;
-        _dbSet.Update(entity);
-        await _efContext.SaveChangesAsync();
     }
     public async Task UpdateAsync(T entity, string pKProperty, TKey id)
     {

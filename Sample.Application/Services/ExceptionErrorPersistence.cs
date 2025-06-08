@@ -3,9 +3,9 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Services
 {
-    public class ExceptionErrorPersistence(IRepository<ErrorLog, Guid> repository)
+    public class ExceptionErrorPersistence(ISqlRepository<ErrorLog, Guid> repository)
     {
-        private readonly IRepository<ErrorLog, Guid> _repository = repository;
+        private readonly ISqlRepository<ErrorLog, Guid> _repository = repository;
 
         public async Task ErrorPersintanceService(ErrorLog log)
         {

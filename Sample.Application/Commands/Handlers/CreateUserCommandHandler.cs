@@ -6,10 +6,10 @@ using Sample.Domain.ValueObjects;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class CreateUserCommandHandler(IRepository<Users, string> repository, 
+    public class CreateUserCommandHandler(IAdoRepository<Users, string> repository, 
 		ICreateUserValidations createUserValidations) : IRequestHandler<CreateUserCommand, Response<Users>>
     {
-        private readonly IRepository<Users, string> _repository = repository;
+        private readonly IAdoRepository<Users, string> _repository = repository;
         private readonly ICreateUserValidations _createUserValidations = createUserValidations;   
 
 		public async Task<Response<Users>> Handle(CreateUserCommand command, CancellationToken cancellationToken)

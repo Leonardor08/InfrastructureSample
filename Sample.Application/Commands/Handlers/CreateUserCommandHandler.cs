@@ -6,10 +6,10 @@ using Sample.Domain.ValueObjects;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class CreateUserCommandHandler(IAdoRepository<Users, string> repository, 
+    public class CreateUserCommandHandler(ISqlRepository<Users, string> repository, 
 		ICreateUserValidations createUserValidations) : IRequestHandler<CreateUserCommand, Response<Users>>
     {
-        private readonly IAdoRepository<Users, string> _repository = repository;
+        private readonly ISqlRepository<Users, string> _repository = repository;
         private readonly ICreateUserValidations _createUserValidations = createUserValidations;   
 
 		public async Task<Response<Users>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
@@ -18,7 +18,7 @@ namespace Sample.Application.Commands.Handlers
 
 			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
 			user.Id = Guid.NewGuid().ToString();
-            await _repository.CreateAsync(user, DatabaseType.Oracle);	
+            await _repository.CreateAsync(user);	
 			
 			Response<Users> response = new() { Success = true, Message = "Error",Data = user };
 			return response;

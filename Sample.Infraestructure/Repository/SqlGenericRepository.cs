@@ -18,7 +18,6 @@ public class SqlGenericRepository<T, TKey> : ISqlRepository<T, TKey>
         _efContext = efContext;
         _dbSet = _efContext.Set<T>();
     }
-
     public async Task CreateAsync(T entity)
     {
         entity.CreatedDate = DateTime.Now;

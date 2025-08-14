@@ -1,22 +1,26 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Application.Commands;
+using Sample.Application.Commands.Handlers;
 using Sample.Application.Queries;
 
 namespace Sample.Api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class UserController(IMediator mediator) : ControllerBase
+	public class UserController(IMediator mediator, CreateUserCommandHandler commandHandler) : ControllerBase
 	{
 		private readonly IMediator _mediator = mediator;
+		private readonly CreateUserCommandHandler _commandHandler = commandHandler;
 
-		[HttpPost]
+        [HttpPost]
 		[Route("Create")]
-		public async Task<IActionResult> CreateUser(CreateUserCommand command)
+		public async Task<IActionResult> CreateUser(CreateUserCommand command, CancellationToken cancellationToken)
 		{
-			var response = await _mediator.Send(command);
-			return Ok(response);
+			//var response = await _mediator.Send(command);
+			var response = await _commandHandler.Handle(command, cancellationToken);
+
+            return Ok(response);
 		}
 
 		[HttpPost]
@@ -71,11 +75,12 @@ namespace Sample.Api.Controllers
 			var response = await _mediator.Send(new GetUsersCountQuery());
 			return Ok(response);
 		}
+
 		[HttpDelete("Delete")]
 		public async Task<IActionResult> DeleteUser([FromQuery] DeleteUserCommand command)
 		{
 			var response = await _mediator.Send(command);
 			return Ok(response);
 		}
-	}
+    }
 }

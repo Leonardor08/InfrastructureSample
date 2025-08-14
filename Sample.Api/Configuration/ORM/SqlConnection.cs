@@ -8,7 +8,8 @@ public static class SqlConnection
 {
     public static IServiceCollection SqlConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(DomainConstants.SQL_CONNECTION)));
+        services.AddDbContext<AppDbContext>(
+            options => options.UseSqlServer(configuration.GetConnectionString(DomainConstants.SQL_CONNECTION)));
         return services;
     }
 }

@@ -31,6 +31,8 @@ public class BatchRepository<T> : IBatchRepository<T> where T : class
         const string query  = @"INSERT INTO Users (Id, Name, Email, Phone, Status_Id, CreatedDate, UpdateDate) " +
                               "VALUES (:Id, :Name, :Email, :Phone, :Status_Id, :CreatedDate, :UpdateDate)";
 
+        var a = "laurita la mejor :) ";
+
         using OracleCommand command = _oracleContext.CreateCommand(query);
         command.CommandText = query;
         command.ArrayBindCount = entities.Count;

@@ -11,10 +11,6 @@
         public int MyProperty4 { get; set; }
         public int MyProperty5 { get; set; }
         public int MyProperty6 { get; set; }
-<<<<<<< HEAD
-
-=======
->>>>>>> sqash
         public int MyProperty7 { get; set; }
     }
 }

@@ -4,12 +4,12 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Commands.Handlers
 {
-	public class DeleteUserCommandhandler(IAdoRepository<Users, string> repository) : IRequestHandler<DeleteUserCommand, Response<bool>>
+	public class DeleteUserCommandhandler(ISqlRepository<Users, string> repository) : IRequestHandler<DeleteUserCommand, Response<bool>>
 	{
-		private readonly IAdoRepository<Users, string> _repository = repository;
+		private readonly ISqlRepository<Users, string> _repository = repository;
 		public async Task<Response<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
 		{
-			await _repository.DeleteAsync("Id", request.Id!);
+			await _repository.DeleteAsync("");
 			return new() { Data = true };
 		}
 	}

@@ -12,11 +12,13 @@ namespace Sample.Api.Configuration.CQRS.Commands
         public static IServiceCollection AddUsersDependency(this IServiceCollection services)
         {
             services.AddScoped<CreateUserCommandHandler>();
+            services.AddTransient<ParallelCreateUsersCommandHandler>();
             services.AddTransient<ICreateUserValidations, CreateUserValidations>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<List<CreateUserCommand>>());
 			services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateUserCommand>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EditUserCommand>());
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetActiveUsersQuery>());
+            //services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetActiveUsersQuery>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetUsersQuery>());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetUserByIdQuery>());
             return services;

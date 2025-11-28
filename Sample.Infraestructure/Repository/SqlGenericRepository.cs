@@ -20,10 +20,9 @@ public class SqlGenericRepository<T, TKey> : ISqlRepository<T, TKey>
     }
     public async Task CreateAsync(T entity)
     {
-        entity.CreatedDate = DateTime.Now;
-        entity.UpdateDate = null;
+        //entity.CreatedDate = DateTime.Now;
+        //entity.UpdateDate = null;
         await _dbSet.AddAsync(entity);
-        await _efContext.SaveChangesAsync();
     }
     public async Task DeleteAsync(TKey entity)
     {
@@ -56,8 +55,13 @@ public class SqlGenericRepository<T, TKey> : ISqlRepository<T, TKey>
         else
             return _dbSet.Where(predicate).OrderByDescending(orderBy);
     }
-    public IQueryable<T> GetQueryablel()
+
+	public Task SaveAsync()
+        => _efContext.SaveChangesAsync();
+
+	public IQueryable<T> GetQueryablel()
     {
+        _dbSet.AsQueryable();
         return _dbSet;
     }
     public async Task UpdateAsync(T entity)

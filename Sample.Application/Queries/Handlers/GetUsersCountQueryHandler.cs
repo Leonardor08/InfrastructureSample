@@ -4,12 +4,12 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers;
 
-public class GetUsersCountQueryHandler(IAdoRepository<Users, string> repository) : IRequestHandler<GetUsersCountQuery, Response<int>>
+public class GetUsersCountQueryHandler(ISqlRepository<Users, string> repository) : IRequestHandler<GetUsersCountQuery, Response<int>>
 {
-	private readonly IAdoRepository<Users, string> _repository = repository;
+	private readonly ISqlRepository<Users, string> _repository = repository;
 	public async Task<Response<int>> Handle(GetUsersCountQuery request, CancellationToken cancellationToken)
 	{
-		int totalUsers = await _repository.ExecuteFunctionAsync<int>("COUNT_USERS", []);
+		int totalUsers = 0;
 		return new() { Data = totalUsers };
 	}
 }

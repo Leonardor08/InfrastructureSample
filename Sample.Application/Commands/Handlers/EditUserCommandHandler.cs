@@ -4,16 +4,14 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Commands.Handlers
 {
-    public class EditUserCommandHandler(IAdoRepository<Users, string> repository) : IRequestHandler<EditUserCommand, Response<Users>>
+    public class EditUserCommandHandler(ISqlRepository<Users, string> repository) : IRequestHandler<EditUserCommand, Response<Users>>
     {
-        private readonly IAdoRepository<Users, string> _repository = repository;
+        private readonly ISqlRepository<Users, string> _repository = repository;
         public async Task<Response<Users>> Handle(EditUserCommand request, CancellationToken cancellationToken)
         {
-            Users targetUser = await _repository.FindByIdAsync("id", request.Id) ?? new();
+            Users targetUser = new ();
 
             UserMapper(request, targetUser);
-
-            await _repository.UpdateAsync(targetUser, "id", request.Id);
 
             return new() { Data = targetUser, Message = "", Success = true };
         }

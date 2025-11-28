@@ -1,6 +1,4 @@
-﻿using Oracle.ManagedDataAccess.Client;
-
-namespace Sample.Application.Interfaces;
+﻿namespace Sample.Application.Interfaces;
 
 public interface ITransactionScope
 {

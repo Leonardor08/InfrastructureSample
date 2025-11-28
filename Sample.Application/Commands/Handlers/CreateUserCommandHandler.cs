@@ -2,7 +2,6 @@
 using Sample.Application.Interfaces.Repositories;
 using Sample.Application.Interfaces.Validations;
 using Sample.Domain.Models;
-using Sample.Domain.ValueObjects;
 
 namespace Sample.Application.Commands.Handlers
 {
@@ -16,7 +15,7 @@ namespace Sample.Application.Commands.Handlers
 		{
 			Users user = new() { Name = command.Name, Phone = command.Number, Email = command.Email, Status_Id = 1 };
 
-			await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
+			//await _createUserValidations.ValidAsync(command.Name, command.Email, command.Number);
 			user.Id = Guid.NewGuid().ToString();
             await _repository.CreateAsync(user);	
 			

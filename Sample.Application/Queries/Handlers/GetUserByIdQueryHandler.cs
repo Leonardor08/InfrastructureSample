@@ -4,13 +4,13 @@ using Sample.Domain.Models;
 
 namespace Sample.Application.Queries.Handlers;
 
-public class GetUserByIdQueryHandler(IAdoRepository<Users, string> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
+public class GetUserByIdQueryHandler(ISqlRepository<Users, string> repository) : IRequestHandler<GetUserByIdQuery, Response<Users>>
 {
-    private readonly IAdoRepository<Users, string> _repository = repository;
+    private readonly ISqlRepository<Users, string> _repository = repository;
 
     public async Task<Response<Users>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        Users user = await _repository.FindByIdAsync("Id", request.Id);
+        Users user = new();
 			return new() { Data = user, Message = "", Success = true };
     }
 }

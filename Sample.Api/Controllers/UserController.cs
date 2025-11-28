@@ -8,19 +8,28 @@ namespace Sample.Api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	public class UserController(IMediator mediator, CreateUserCommandHandler commandHandler) : ControllerBase
+	public class UserController(IMediator mediator, CreateUserCommandHandler commandHandler,
+		ParallelCreateUsersCommandHandler parallelCreate) : ControllerBase
 	{
 		private readonly IMediator _mediator = mediator;
 		private readonly CreateUserCommandHandler _commandHandler = commandHandler;
+		private readonly ParallelCreateUsersCommandHandler _parallel = parallelCreate;
 
         [HttpPost]
 		[Route("Create")]
 		public async Task<IActionResult> CreateUser(CreateUserCommand command, CancellationToken cancellationToken)
 		{
-			//var response = await _mediator.Send(command);
 			var response = await _commandHandler.Handle(command, cancellationToken);
 
             return Ok(response);
+		}
+
+		[HttpPost]
+		[Route("ParallelCreate")]
+		public async Task<IActionResult> CreateUsers(ParallelCreateUsersCommand parallelCreateUsersCommand, CancellationToken cancellationToken)
+		{
+			var response = await _parallel.Handle(parallelCreateUsersCommand, cancellationToken);
+			return Ok(response);
 		}
 
 		[HttpPost]
@@ -47,12 +56,12 @@ namespace Sample.Api.Controllers
 			return Ok(response);
 		}
 
-		[HttpGet("GetActiveUsers")]
-		public async Task<IActionResult> GetActiveUsers()
-		{
-			var response = await _mediator.Send(new GetActiveUsersQuery());
-			return Ok(response);
-		}
+		//[HttpGet("GetActiveUsers")]
+		//public async Task<IActionResult> GetActiveUsers()
+		//{
+		//	var response = await _mediator.Send(new GetActiveUsersQuery());
+		//	return Ok(response);
+		//}
 
 		[HttpGet("GetUsersInfo")]
 		public async Task<IActionResult> GetUsersInfo()

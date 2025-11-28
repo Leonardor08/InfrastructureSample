@@ -9,7 +9,7 @@ namespace Sample.Api.Configuration
 		public static void Inject(this WebApplicationBuilder webApplicationBuilder)
 		{
 			webApplicationBuilder.Services.SqlConfiguration(webApplicationBuilder.Configuration);
-			webApplicationBuilder.Services.OracleConfiguration(webApplicationBuilder.Configuration);
+			//webApplicationBuilder.Services.OracleConfiguration(webApplicationBuilder.Configuration);
 			webApplicationBuilder.Services.AddRepositoryDependency();
 			webApplicationBuilder.Services.AddUsersDependency();
 			webApplicationBuilder.Services.AddControllers();

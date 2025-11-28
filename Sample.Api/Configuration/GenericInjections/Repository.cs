@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Sample.Application.Behaviors;
-using Sample.Application.Interfaces;
+using Sample.Application.Interfaces.Factories;
 using Sample.Application.Interfaces.Repositories;
-using Sample.Infraestructure.Data.AdoDbContext;
 using Sample.Infraestructure.Repository;
 
 namespace Sample.Api.Configuration.GenericInjections;
@@ -11,10 +10,9 @@ public static class Repository
 {
 	public static IServiceCollection AddRepositoryDependency(this IServiceCollection services)
     {
-        services.AddScoped(typeof(ISqlRepository<,>), typeof(SqlGenericRepository<,>));
-		services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
-        services.AddScoped(typeof(IAdoRepository<,>), typeof(AdoGenericRepository<,>));
-        services.AddScoped(typeof(ITransactionScope), typeof(OracleDataContext));
+        services.AddSingleton(typeof(IRepositoryFactory<,>), typeof(RepositoryFactory<,>));
+        services.AddTransient(typeof(ISqlRepository<,>), typeof(SqlGenericRepository<,>));
+		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
         return services;
     }

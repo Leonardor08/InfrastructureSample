@@ -4,6 +4,7 @@ namespace Sample.Application.Interfaces.Repositories;
 
 public interface ISqlRepository<T, TKey> where TKey : notnull
 {
+	Task SaveAsync();
     IQueryable<T> GetQueryablel();
     Task CreateAsync(T entity);
     Task DeleteAsync(TKey entity);

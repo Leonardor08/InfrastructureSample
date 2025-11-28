@@ -1,6 +1,4 @@
-﻿using Oracle.ManagedDataAccess.Client;
-using Sample.Domain.CustomAttributes;
-using Sample.Domain.Models;
+﻿using Sample.Domain.Models;
 using System.Reflection;
 
 namespace Sample.Infraestructure._shared
@@ -23,28 +21,6 @@ namespace Sample.Infraestructure._shared
                     values.Add(value);
             }
             return string.Join(", ", values);
-        }
-        public static T MapEntity(OracleDataReader reader)
-        {
-            T entity = Activator.CreateInstance<T>();
-            PropertyInfo[] properties = typeof(T).GetProperties();
-
-            for (int i = 0; i < properties.Length; i++)
-            {
-                if (reader[properties[i].Name] == DBNull.Value)
-                    properties[i].SetValue(entity, null);
-
-                else
-                {
-                    object value = reader[properties[i].Name];
-
-                    if (properties[i].PropertyType == typeof(Guid))
-                        properties[i].SetValue(entity, Guid.Parse(value.ToString()!));
-                    else
-                        properties[i].SetValue(entity, Convert.ChangeType(value, Nullable.GetUnderlyingType(properties[i].PropertyType) ?? properties[i].PropertyType));
-                }
-            }
-            return entity;
         }
         public static string MapSetClause(T entity)
         {

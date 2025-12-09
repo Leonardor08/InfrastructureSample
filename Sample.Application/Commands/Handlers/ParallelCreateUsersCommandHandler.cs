@@ -13,6 +13,7 @@ namespace Sample.Application.Commands.Handlers
 		public async Task<Response<List<Users>>> Handle(ParallelCreateUsersCommand request, CancellationToken cancellationToken)
 		{
 			var source = await CreateUserList.CreateList();
+			
 			ParallelOptions options = new() { MaxDegreeOfParallelism = 4 };
 
 			await Parallel.ForEachAsync(source, options, async (user, token) =>
@@ -22,9 +23,7 @@ namespace Sample.Application.Commands.Handlers
 				await repo.CreateAsync(user);
 
 				await repo.SaveAsync();
-
 			});
-
 
 			return new Response<List<Users>>() { Data = source };
 		}
